@@ -55,6 +55,24 @@ code, pre, kbd, .font-mono {
 }
 
 
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+.toast-in {
+  animation: toast-in 0.25s ease-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
+.fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

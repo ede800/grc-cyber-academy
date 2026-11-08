@@ -1,10 +1,35 @@
-import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, Circle, ClipboardCheck, FileText } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, Circle, ClipboardCheck, Clock, FileText } from 'lucide-react'
+import { useEffect, useState, type KeyboardEvent } from 'react'
 import { Link, Navigate, useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { Quiz } from '../components/Quiz'
-import { BlockView, Card, PageHeader, ProgressBar, Rich, ScoreBadge, Tag } from '../components/ui'
+import { BlockView, Card, inputCls, PageHeader, ProgressBar, Rich, ScoreBadge, Tag } from '../components/ui'
 import { modules } from '../data/modules'
 import { useProgress } from '../lib/progress'
+import type { Block } from '../types'
+
+/** Temps de lecture estimé à 150 mots par minute : texte réglementaire dense, tableaux et livrables compris. */
+function readingMinutes(blocks: Block[]): number {
+  const text = blocks
+    .map((b) => {
+      switch (b.type) {
+        case 'p':
+        case 'h':
+          return b.text
+        case 'list':
+          return b.items.join(' ')
+        case 'table':
+          return [...b.headers, ...b.rows.flat()].join(' ')
+        case 'doc':
+          return b.content
+        case 'callout':
+          return `${b.title} ${b.text}`
+        case 'links':
+          return ''
+      }
+    })
+    .join(' ')
+  return Math.max(1, Math.round(text.split(/\s+/).length / 200))
+}
 
 const PILLAR: Record<string, string> = { G: 'Gouvernance', R: 'Risques', C: 'Conformité' }
 
@@ -83,27 +108,71 @@ export function ModuleDetail() {
   const section = module.sections.find((s) => s.id === sectionId) ?? module.sections[0]
   const sectionIndex = module.sections.indexOf(section)
   const nextSection = module.sections[sectionIndex + 1]
+  const prevSection = module.sections[sectionIndex - 1]
+  const best = progress.quizBest[module.id]
+  const badge: Record<Tab, string> = {
+    cours: `${read.length}/${module.sections.length}`,
+    templates: String(module.templates.length),
+    quiz: best !== undefined ? `${best} %` : String(module.quiz.length),
+  }
+  const totalMinutes = module.sections.reduce((n, s) => n + readingMinutes(s.blocks), 0)
+
+  // Onglets ARIA : les flèches gauche/droite passent d'un onglet à l'autre.
+  const onTabKey = (e: KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
+    const i = TABS.findIndex((t) => t.id === tab)
+    const next = TABS[(i + (e.key === 'ArrowRight' ? 1 : TABS.length - 1)) % TABS.length]
+    setTab(next.id)
+    document.getElementById(`tab-${next.id}`)?.focus()
+  }
+
+  const goNext = () => {
+    if (!read.includes(section.id)) toggleSection(module.id, section.id)
+    if (nextSection) setSectionId(nextSection.id)
+    else setTab('templates')
+  }
 
   return (
     <>
       <Link to="/modules" className="mb-3 inline-flex items-center gap-1 text-sm text-mute hover:text-white">
         <ArrowLeft size={14} aria-hidden /> Tous les modules
       </Link>
-      <PageHeader eyebrow={`Module ${module.number} · ${PILLAR[module.pillar]}`} title={module.title}>
+      <PageHeader eyebrow={`Module ${module.number} / ${modules.length} · ${PILLAR[module.pillar]}`} title={module.title}>
         {module.summary}
       </PageHeader>
+
+      <div className="mb-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-mute">
+        <span className="flex items-center gap-1.5">
+          <Clock size={13} aria-hidden /> ≈ {totalMinutes} min de lecture
+        </span>
+        <span className="flex min-w-40 flex-1 items-center gap-2">
+          <span className="w-full max-w-56">
+            <ProgressBar value={read.length / module.sections.length} tone={read.length >= module.sections.length ? 'bg-emerald' : 'bg-accent'} label="Sections lues" />
+          </span>
+          <span className="shrink-0 font-mono">
+            {read.length}/{module.sections.length} lues
+          </span>
+        </span>
+        <span className="flex items-center gap-1.5">
+          Quiz : <ScoreBadge score={best} />
+        </span>
+      </div>
 
       <div role="tablist" className="mb-5 flex gap-1 overflow-x-auto border-b border-line">
         {TABS.map((t) => (
           <button
             key={t.id}
+            id={`tab-${t.id}`}
             type="button"
             role="tab"
             aria-selected={tab === t.id}
+            tabIndex={tab === t.id ? 0 : -1}
             onClick={() => setTab(t.id)}
-            className={`-mb-px flex shrink-0 items-center gap-2 border-b-2 px-3 py-2 text-sm ${tab === t.id ? 'border-accent font-medium text-white' : 'border-transparent text-mute hover:text-white'}`}
+            onKeyDown={onTabKey}
+            className={`-mb-px flex shrink-0 items-center gap-2 border-b-2 px-3 py-2.5 text-sm transition ${tab === t.id ? 'border-accent font-medium text-white' : 'border-transparent text-mute hover:text-white'}`}
           >
             <t.icon size={15} aria-hidden /> {t.label}
+            <span className={`rounded px-1.5 font-mono text-[10px] ${tab === t.id ? 'bg-accent/20 text-blue-200' : 'bg-raised text-mute'}`}>{badge[t.id]}</span>
           </button>
         ))}
       </div>
@@ -111,7 +180,18 @@ export function ModuleDetail() {
       {tab === 'cours' && (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[15rem_minmax(0,1fr)]">
           <nav aria-label="Sections du cours" className="lg:sticky lg:top-6 lg:self-start">
-            <ul className="flex gap-1 overflow-x-auto pb-2 lg:block lg:space-y-1 lg:pb-0">
+            <label className="block lg:hidden">
+              <span className="sr-only">Aller à la section</span>
+              <select value={section.id} onChange={(e) => setSectionId(e.target.value)} className={inputCls}>
+                {module.sections.map((s, i) => (
+                  <option key={s.id} value={s.id}>
+                    {read.includes(s.id) ? '✓ ' : ''}
+                    {i + 1}. {s.title}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <ul className="hidden space-y-1 lg:block">
               {module.sections.map((s) => (
                 <li key={s.id} className="shrink-0">
                   <button
@@ -141,27 +221,39 @@ export function ModuleDetail() {
                 </ul>
               </Card>
             )}
-            <h2 className="text-xl font-bold text-white">{section.title}</h2>
-            {section.blocks.map((b, i) => (
-              <BlockView key={`${section.id}-${i}`} block={b} />
-            ))}
+            <div key={section.id} className="fade-in">
+              <p className="mb-1 font-mono text-xs text-mute">
+                Section {sectionIndex + 1} / {module.sections.length} · ≈ {readingMinutes(section.blocks)} min
+              </p>
+              <h2 className="text-xl font-bold text-white sm:text-2xl">{section.title}</h2>
+              {section.blocks.map((b, i) => (
+                <BlockView key={`${section.id}-${i}`} block={b} />
+              ))}
+            </div>
 
-            <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
-              <label className="flex cursor-pointer items-center gap-2 text-sm">
+            <div className="mt-8 border-t border-line pt-4">
+              <label className="mb-4 flex w-fit cursor-pointer items-center gap-2 text-sm">
                 <input type="checkbox" checked={read.includes(section.id)} onChange={() => toggleSection(module.id, section.id)} className="size-4 accent-emerald-500" />
                 J’ai terminé cette section
               </label>
-              <button
-                type="button"
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:text-white"
-                onClick={() => {
-                  if (!read.includes(section.id)) toggleSection(module.id, section.id)
-                  if (nextSection) setSectionId(nextSection.id)
-                  else setTab('templates')
-                }}
-              >
-                {nextSection ? `Suivant : ${nextSection.title}` : 'Terminer et voir les livrables'} <ArrowRight size={14} aria-hidden />
-              </button>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {prevSection ? (
+                  <button type="button" onClick={() => setSectionId(prevSection.id)} className="rounded-lg border border-line p-3 text-left transition hover:border-accent">
+                    <span className="flex items-center gap-1 text-xs text-mute">
+                      <ArrowLeft size={13} aria-hidden /> Précédent
+                    </span>
+                    <span className="mt-0.5 block text-sm font-medium text-white">{prevSection.title}</span>
+                  </button>
+                ) : (
+                  <span className="hidden sm:block" />
+                )}
+                <button type="button" onClick={goNext} className="rounded-lg border border-accent/60 bg-accent/10 p-3 text-right transition hover:bg-accent/20">
+                  <span className="flex items-center justify-end gap-1 text-xs text-blue-300">
+                    {nextSection ? 'Marquer comme lu et continuer' : 'Terminer le cours'} <ArrowRight size={13} aria-hidden />
+                  </span>
+                  <span className="mt-0.5 block text-sm font-medium text-white">{nextSection ? nextSection.title : 'Templates & livrables'}</span>
+                </button>
+              </div>
             </div>
           </article>
         </div>

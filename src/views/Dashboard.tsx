@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpen, Building2, Clock, GitCompareArrows, Grid3x3, RotateCcw, Scale, Trophy } from 'lucide-react'
+import { ArrowRight, BookOpen, Building2, ClipboardCheck, Clock, GitCompareArrows, Grid3x3, RotateCcw, Scale, Trophy } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Card, PageHeader, ProgressBar, ScoreBadge } from '../components/ui'
 import { contractCases } from '../data/contractsRedline'
@@ -68,13 +68,15 @@ export function Dashboard() {
 
       <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[
-          { label: 'Modules lus', value: `${modulesDone}/${modules.length}` },
-          { label: 'Moyenne des quiz', value: quizAvg !== undefined ? `${quizAvg} %` : '-' },
-          { label: 'Contrats revus', value: `${Object.keys(progress.contracts).length}/${contractCases.length}` },
-          { label: 'Tiers évalués', value: `${Object.keys(progress.tprm).length}/${tprmCases.length}` },
+          { label: 'Modules lus', icon: BookOpen, value: `${modulesDone}/${modules.length}` },
+          { label: 'Moyenne des quiz', icon: ClipboardCheck, value: quizAvg !== undefined ? `${quizAvg} %` : '-' },
+          { label: 'Contrats revus', icon: Scale, value: `${Object.keys(progress.contracts).length}/${contractCases.length}` },
+          { label: 'Tiers évalués', icon: Building2, value: `${Object.keys(progress.tprm).length}/${tprmCases.length}` },
         ].map((s) => (
           <Card key={s.label} className="p-4">
-            <p className="text-xs text-mute">{s.label}</p>
+            <p className="flex items-center gap-1.5 text-xs text-mute">
+              <s.icon size={13} className="text-accent" aria-hidden /> {s.label}
+            </p>
             <p className="mt-1 font-mono text-2xl font-bold text-white">{s.value}</p>
           </Card>
         ))}
@@ -92,8 +94,8 @@ export function Dashboard() {
                 <Link key={m.id} to={`/modules/${m.id}`} className="flex items-center gap-3 p-3 hover:bg-raised/50">
                   <span className="w-7 font-mono text-sm font-bold text-accent">{String(m.number).padStart(2, '0')}</span>
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm text-white">{m.title}</span>
-                    <span className="mt-1 block max-w-xs">
+                    <span className="line-clamp-2 block text-sm leading-snug text-white">{m.title}</span>
+                    <span className="mt-1.5 block max-w-xs">
                       <ProgressBar value={read / m.sections.length} label={`Lecture du module ${m.number}`} />
                     </span>
                   </span>

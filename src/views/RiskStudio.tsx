@@ -2,7 +2,7 @@ import { ArrowLeft, ArrowRight, FilePlus2, Grid3x3, Trash2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { RiskMatrix, type MatrixMarker } from '../components/RiskMatrix'
-import { btnGhost, btnPrimary, Card, CopyButton, DocBlock, inputCls, LevelBadge, PageHeader, ScoreBadge, Segmented, Tag } from '../components/ui'
+import { btnGhost, btnPrimary, Card, CopyButton, DocBlock, inputCls, LevelBadge, ListSummary, PageHeader, ScoreBadge, Segmented, StatusBadge, Tag } from '../components/ui'
 import { riskControls, riskScenarios } from '../data/riskScenarios'
 import { useProgress, type CustomRisk, type RiskEntry } from '../lib/progress'
 import { APPETITE, levelOf, residual, scoreRisk } from '../lib/scoring'
@@ -64,6 +64,13 @@ export function RiskList() {
       <PageHeader eyebrow="Simulateur 3" title="Risk Register & EBIOS Studio">
         Cotez des scénarios de risque réels (gravité × vraisemblance), sélectionnez les mesures ISO 27002 / NIST, calculez le risque résiduel, choisissez l’option de traitement et générez le mémo d’acceptation pour le COMEX. Appétence au risque retenue : résiduel ≤ {APPETITE}.
       </PageHeader>
+      <ListSummary
+        unit="scénarios cotés et validés"
+        done={riskScenarios.filter((s) => progress.risks[s.id]?.score !== undefined).length}
+        total={riskScenarios.length}
+        scores={riskScenarios.flatMap((s) => (progress.risks[s.id]?.score !== undefined ? [progress.risks[s.id].score as number] : []))}
+        next={((s) => s && { to: `/risques/${s.id}`, label: s.title })(riskScenarios.find((s) => progress.risks[s.id]?.score === undefined))}
+      />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <Card className="overflow-x-auto">
@@ -84,7 +91,7 @@ export function RiskList() {
                 const inh = r.entry ? r.entry.gravity * r.entry.likelihood : null
                 const resScore = res ? res.gravity * res.likelihood : null
                 return (
-                  <tr key={r.id} className="border-t border-line align-top">
+                  <tr key={r.id} onClick={() => navigate(`/risques/${r.id}`)} className="cursor-pointer border-t border-line align-top transition hover:bg-raised/50">
                     <td className="px-3 py-2 font-mono text-xs text-mute">{r.code}</td>
                     <td className="px-3 py-2">
                       <Link to={`/risques/${r.id}`} className="font-medium text-white hover:text-accent">
@@ -95,7 +102,7 @@ export function RiskList() {
                     <td className="px-3 py-2">{inh !== null ? <LevelBadge level={levelOf(inh)} /> : <span className="text-xs text-mute">À coter</span>}</td>
                     <td className="px-3 py-2">{resScore !== null && <LevelBadge level={levelOf(resScore)} />}</td>
                     <td className="px-3 py-2 text-xs">{r.entry?.treatment ?? '-'}</td>
-                    <td className="px-3 py-2">{r.custom ? <Tag>Perso</Tag> : <ScoreBadge score={r.entry?.score} />}</td>
+                    <td className="px-3 py-2">{r.custom ? <Tag>Perso</Tag> : <StatusBadge score={r.entry?.score} />}</td>
                   </tr>
                 )
               })}

@@ -1,7 +1,7 @@
 import { ArrowLeft, ArrowRight, Building2, CheckCircle2, FileSearch, RotateCcw, XCircle } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
-import { btnGhost, btnPrimary, Card, PageHeader, Rich, ScoreBadge, Segmented, Tag } from '../components/ui'
+import { btnGhost, btnPrimary, Card, ListSummary, PageHeader, Rich, Segmented, StatusBadge, Tag } from '../components/ui'
 import { tprmCases } from '../data/tprmCases'
 import { useProgress } from '../lib/progress'
 import { scoreTprm, TIERS, VERDICTS, type TprmAnswer } from '../lib/scoring'
@@ -21,13 +21,20 @@ export function TprmList() {
       <PageHeader eyebrow="Simulateur 2" title="Vendor Risk Assessor">
         Cinq fournisseurs à évaluer avant contractualisation. Qualifiez leur criticité, inspectez leurs réponses et leurs preuves, relevez les signaux d’alerte, puis rendez votre verdict.
       </PageHeader>
+      <ListSummary
+        unit="fournisseurs évalués"
+        done={tprmCases.filter((c) => progress.tprm[c.id] !== undefined).length}
+        total={tprmCases.length}
+        scores={Object.values(progress.tprm)}
+        next={((c) => c && { to: `/tprm/${c.id}`, label: c.vendor })(tprmCases.find((c) => progress.tprm[c.id] === undefined))}
+      />
       <ul className="grid grid-cols-1 gap-3 md:grid-cols-2">
         {tprmCases.map((c) => (
           <li key={c.id}>
             <Link to={`/tprm/${c.id}`} className="flex h-full flex-col rounded-lg border border-line bg-card p-5 transition hover:border-accent">
               <div className="flex items-center justify-between gap-2">
                 <Tag>{c.sector}</Tag>
-                <ScoreBadge score={progress.tprm[c.id]} />
+                <StatusBadge score={progress.tprm[c.id]} />
               </div>
               <h2 className="mt-2 flex items-center gap-2 font-semibold text-white">
                 <Building2 size={16} className="text-accent" aria-hidden /> {c.vendor}

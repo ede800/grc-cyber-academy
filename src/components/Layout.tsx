@@ -1,18 +1,39 @@
-import { BookOpen, Building2, Gauge, GitCompareArrows, Grid3x3, Menu, Scale, Search, Trophy, X } from 'lucide-react'
+import { BookOpen, Building2, CheckCircle2, Gauge, GitCompareArrows, Grid3x3, Menu, Scale, Search, Trophy, X } from 'lucide-react'
 import { useEffect, useState, type ReactNode } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import { computeXp, RANKS, rankFor, useProgress } from '../lib/progress'
+import { contractCases } from '../data/contractsRedline'
+import { modules } from '../data/modules'
+import { riskScenarios } from '../data/riskScenarios'
+import { tprmCases } from '../data/tprmCases'
+import { computeXp, RANKS, rankFor, useProgress, type Progress } from '../lib/progress'
 import { CommandPalette } from './CommandPalette'
 import { ProgressBar } from './ui'
+import { XpToast } from './XpToast'
+
+/** Avancement affiché à côté de chaque entrée de navigation. */
+function navCount(to: string, p: Progress): [number, number] | null {
+  switch (to) {
+    case '/modules':
+      return [modules.filter((m) => (p.coursesRead[m.id]?.length ?? 0) >= m.sections.length && p.quizBest[m.id] !== undefined).length, modules.length]
+    case '/contrats':
+      return [Object.keys(p.contracts).length, contractCases.length]
+    case '/tprm':
+      return [Object.keys(p.tprm).length, tprmCases.length]
+    case '/risques':
+      return [riskScenarios.filter((s) => p.risks[s.id]?.score !== undefined).length, riskScenarios.length]
+    default:
+      return null
+  }
+}
 
 const NAV = [
   { to: '/', label: 'Tableau de bord', icon: Gauge, end: true },
-  { to: '/modules', label: 'Cursus (8 modules)', icon: BookOpen },
+  { to: '/modules', label: 'Cursus', icon: BookOpen },
   { section: 'Simulateurs GRC' },
-  { to: '/contrats', label: 'Contract & PAS Redliner', icon: Scale },
-  { to: '/tprm', label: 'Vendor Risk Assessor', icon: Building2 },
-  { to: '/risques', label: 'Risk Register & EBIOS', icon: Grid3x3 },
-  { to: '/referentiels', label: 'Cross-Framework Mapper', icon: GitCompareArrows },
+  { to: '/contrats', label: 'Contract Redliner', icon: Scale },
+  { to: '/tprm', label: 'Vendor Assessor', icon: Building2 },
+  { to: '/risques', label: 'Risk Register EBIOS', icon: Grid3x3 },
+  { to: '/referentiels', label: 'Framework Mapper', icon: GitCompareArrows },
 ] as const
 
 function SidebarContent({ onSearch }: { onSearch: () => void }) {
@@ -22,10 +43,10 @@ function SidebarContent({ onSearch }: { onSearch: () => void }) {
   return (
     <>
       <div className="flex items-center gap-2.5 px-4 pt-5 pb-4">
-        <img src="./favicon.svg" alt="" width={30} height={30} />
+        <img src="./favicon.svg" alt="" width={32} height={32} />
         <div className="leading-tight">
-          <p className="font-bold text-white">GRC & Cyber Compliance</p>
-          <p className="font-mono text-[10px] tracking-widest text-accent uppercase">Academy</p>
+          <p className="text-[15px] font-bold whitespace-nowrap text-white">GRC & Cyber Academy</p>
+          <p className="font-mono text-[10px] tracking-widest text-accent uppercase">Compliance · FR</p>
         </div>
       </div>
 
@@ -71,13 +92,26 @@ function SidebarContent({ onSearch }: { onSearch: () => void }) {
                 }`
               }
             >
-              <item.icon size={16} aria-hidden /> {item.label}
+              <item.icon size={16} className="shrink-0" aria-hidden />
+              <span className="flex-1 truncate">{item.label}</span>
+              <NavBadge count={navCount(item.to, progress)} />
             </NavLink>
           ),
         )}
       </nav>
       <p className="border-t border-line px-4 py-3 text-[11px] leading-snug text-mute">Contenu pédagogique : vérifiez toujours les textes officiels en vigueur avant usage en production.</p>
     </>
+  )
+}
+
+function NavBadge({ count }: { count: [number, number] | null }) {
+  if (!count) return null
+  const [done, total] = count
+  if (done >= total) return <CheckCircle2 size={14} className="shrink-0 text-emerald" aria-label="Terminé" />
+  return (
+    <span className={`shrink-0 rounded px-1.5 font-mono text-[10px] ${done ? 'bg-accent/15 text-blue-300' : 'text-mute'}`} aria-label={`${done} sur ${total}`}>
+      {done}/{total}
+    </span>
   )
 }
 
@@ -140,6 +174,7 @@ export function Layout({ children }: { children: ReactNode }) {
       </main>
 
       <CommandPalette open={searchOpen} onClose={() => setSearchOpen(false)} />
+      <XpToast />
     </div>
   )
 }

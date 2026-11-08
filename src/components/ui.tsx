@@ -252,3 +252,41 @@ export const btnPrimary =
   'inline-flex items-center justify-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-50'
 export const btnGhost =
   'inline-flex items-center justify-center gap-2 rounded-md border border-line px-3 py-2 text-sm text-ink transition hover:border-accent hover:text-white'
+
+/** Bandeau d'avancement d'un simulateur : où j'en suis et quel dossier ouvrir ensuite. */
+export function ListSummary({ done, total, scores, next, unit }: { done: number; total: number; scores: number[]; next?: { to: string; label: string }; unit: string }) {
+  const average = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : undefined
+  return (
+    <Card className="mb-5 flex flex-wrap items-center gap-x-6 gap-y-3 p-4">
+      <div className="min-w-48 flex-1">
+        <p className="mb-1.5 flex items-baseline justify-between gap-3 text-sm">
+          <span className="text-white">
+            <span className="font-mono font-bold">
+              {done}/{total}
+            </span>{' '}
+            {unit}
+          </span>
+          {average !== undefined && (
+            <span className="text-xs text-mute">
+              Moyenne <ScoreBadge score={average} />
+            </span>
+          )}
+        </p>
+        <ProgressBar value={done / total} tone={done >= total ? 'bg-emerald' : 'bg-accent'} label={`Avancement : ${done} sur ${total}`} />
+      </div>
+      {next ? (
+        <Link to={next.to} className={btnPrimary}>
+          {done ? 'Continuer' : 'Commencer'} : {next.label} <ArrowRight size={15} aria-hidden />
+        </Link>
+      ) : (
+        <p className="text-sm text-emerald">Tout est traité. Rejouez un dossier pour améliorer votre score.</p>
+      )}
+    </Card>
+  )
+}
+
+/** Statut d'un dossier dans une liste : score obtenu ou pastille « À faire ». */
+export function StatusBadge({ score }: { score?: number }) {
+  if (score === undefined) return <span className="rounded border border-line px-1.5 py-0.5 text-[11px] text-mute">À faire</span>
+  return <ScoreBadge score={score} />
+}

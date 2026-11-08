@@ -1,7 +1,7 @@
 import { ArrowLeft, ArrowRight, CheckCircle2, Gavel, RotateCcw, Scale, ShieldCheck, XCircle } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
-import { btnGhost, btnPrimary, Card, CopyButton, LevelBadge, PageHeader, ScoreBadge, Segmented, Tag } from '../components/ui'
+import { btnGhost, btnPrimary, Card, CopyButton, LevelBadge, ListSummary, PageHeader, Segmented, StatusBadge, Tag } from '../components/ui'
 import { contractCases } from '../data/contractsRedline'
 import { useProgress } from '../lib/progress'
 import { RISK_LEVELS, scoreContract } from '../lib/scoring'
@@ -15,13 +15,20 @@ export function ContractList() {
       <PageHeader eyebrow="Simulateur 1" title="Contract & PAS Redliner">
         Des extraits de contrats rédigés en faveur du fournisseur. Repérez les pièges juridiques et GRC, cotez le risque, puis choisissez la contre-proposition de clause la plus protectrice et réaliste.
       </PageHeader>
+      <ListSummary
+        unit="dossiers revus"
+        done={contractCases.filter((c) => progress.contracts[c.id] !== undefined).length}
+        total={contractCases.length}
+        scores={Object.values(progress.contracts)}
+        next={((c) => c && { to: `/contrats/${c.id}`, label: c.title })(contractCases.find((c) => progress.contracts[c.id] === undefined))}
+      />
       <ul className="grid grid-cols-1 gap-3 md:grid-cols-2">
         {contractCases.map((c, i) => (
           <li key={c.id}>
             <Link to={`/contrats/${c.id}`} className="flex h-full flex-col rounded-lg border border-line bg-card p-5 transition hover:border-accent">
               <div className="flex items-center justify-between gap-2">
                 <Tag>Dossier {String(i + 1).padStart(2, '0')}</Tag>
-                <ScoreBadge score={progress.contracts[c.id]} />
+                <StatusBadge score={progress.contracts[c.id]} />
               </div>
               <h2 className="mt-2 font-semibold text-white">{c.title}</h2>
               <p className="mt-0.5 text-xs text-accent">{c.contractType}</p>
