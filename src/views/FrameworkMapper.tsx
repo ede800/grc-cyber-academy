@@ -35,7 +35,7 @@ export function FrameworkMapper() {
             role="tab"
             aria-selected={tab === t.id}
             onClick={() => setParams(t.id === 'iso' ? { tab: 'iso' } : {})}
-            className={`-mb-px border-b-2 px-3 py-2 text-sm ${tab === t.id ? 'border-accent font-medium text-white' : 'border-transparent text-mute hover:text-white'}`}
+            className={`-mb-px border-b-2 px-3 py-2 text-sm ${tab === t.id ? 'border-accent font-medium text-strong' : 'border-transparent text-mute hover:text-strong'}`}
           >
             {t.label}
           </button>
@@ -71,7 +71,7 @@ function Crosswalk() {
                 type="button"
                 onClick={() => setParams({ theme: m.id })}
                 aria-current={m.id === selected.id}
-                className={`w-full rounded-md border px-3 py-2 text-left text-sm ${m.id === selected.id ? 'border-accent bg-raised text-white' : 'border-transparent text-mute hover:border-line hover:text-white'}`}
+                className={`w-full rounded-md border px-3 py-2 text-left text-sm ${m.id === selected.id ? 'border-accent bg-raised text-strong' : 'border-transparent text-mute hover:border-line hover:text-strong'}`}
               >
                 <span className="block font-medium">{m.theme}</span>
                 <span className="text-[11px] text-mute">{m.category}</span>
@@ -85,7 +85,7 @@ function Crosswalk() {
       <div className="min-w-0 space-y-4">
         <Card className="p-5">
           <Tag>{selected.category}</Tag>
-          <h2 className="mt-2 text-xl font-bold text-white">{selected.theme}</h2>
+          <h2 className="mt-2 text-xl font-bold text-strong">{selected.theme}</h2>
           <p className="mt-1 text-mute">{selected.summary}</p>
           <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2 2xl:grid-cols-3">
             {FRAMEWORKS.map((f) => (
@@ -93,7 +93,7 @@ function Crosswalk() {
                 <p className={`text-xs font-semibold tracking-wide uppercase ${f.cls}`}>{f.label}</p>
                 <ul className="mt-2 space-y-1">
                   {selected[f.key].map((ref) => (
-                    <li key={ref} className="font-mono text-[12.5px] leading-snug text-slate-200">
+                    <li key={ref} className="font-mono text-[12.5px] leading-snug text-ink">
                       {ref}
                     </li>
                   ))}
@@ -124,9 +124,9 @@ function Crosswalk() {
             <tbody>
               {rows.map((m) => (
                 <tr key={m.id} onClick={() => setParams({ theme: m.id })} className={`cursor-pointer border-t border-line align-top hover:bg-raised/50 ${m.id === selected.id ? 'bg-accent/10' : ''}`}>
-                  <td className="px-3 py-2 text-sm font-medium text-white">{m.theme}</td>
+                  <td className="px-3 py-2 text-sm font-medium text-strong">{m.theme}</td>
                   {FRAMEWORKS.map((f) => (
-                    <td key={f.key} className="px-3 py-2 font-mono text-slate-300">
+                    <td key={f.key} className="px-3 py-2 font-mono text-ink">
                       {m[f.key].map((ref) => ref.split(' ').slice(0, 2).join(' ')).join(', ')}
                     </td>
                   ))}
@@ -183,7 +183,7 @@ function IsoExplorer() {
     <>
       <Card className="mb-4 flex flex-wrap items-center justify-between gap-3 p-4">
         <div className="text-sm">
-          <p className="font-semibold text-white">Ma Déclaration d’Applicabilité</p>
+          <p className="font-semibold text-strong">Ma Déclaration d’Applicabilité</p>
           <p className="text-mute">
             {filled}/93 mesures statuées · {excluded} exclusion{excluded > 1 ? 's' : ''} · une exclusion sans justification est un constat d’audit.
           </p>
@@ -215,7 +215,7 @@ function IsoExplorer() {
                   <div className="min-w-0">
                     <p className="flex flex-wrap items-center gap-2">
                       <span className="font-mono text-sm font-bold text-accent">{c.id}</span>
-                      <span className="font-semibold text-white">{c.title}</span>
+                      <span className="font-semibold text-strong">{c.title}</span>
                       {c.isNew && (
                         <span className="inline-flex items-center gap-1 rounded border border-emerald/50 bg-emerald/10 px-1.5 text-[10px] font-semibold text-emerald">
                           <Sparkles size={10} aria-hidden /> Nouveau 2022
@@ -277,7 +277,7 @@ function FieldGuide({ c, defaultOpen }: { c: IsoControl; defaultOpen: boolean })
   ]
   return (
     <div className="mt-3">
-      <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="inline-flex items-center gap-1.5 text-xs font-medium text-accent hover:text-white">
+      <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="inline-flex items-center gap-1.5 text-xs font-medium text-accent hover:text-strong">
         <ChevronRight size={13} className={`transition ${open ? 'rotate-90' : ''}`} aria-hidden /> Guide de terrain de l’auditeur
       </button>
       {open && (

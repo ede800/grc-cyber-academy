@@ -40,7 +40,7 @@ export function CareerAndTemplates() {
             role="tab"
             aria-selected={tab === id}
             onClick={() => setParams(id === 'livrables' ? {} : { tab: id })}
-            className={`-mb-px flex items-center gap-2 border-b-2 px-3 py-2.5 text-sm transition ${tab === id ? 'border-accent font-medium text-white' : 'border-transparent text-mute hover:text-white'}`}
+            className={`-mb-px flex items-center gap-2 border-b-2 px-3 py-2.5 text-sm transition ${tab === id ? 'border-accent font-medium text-strong' : 'border-transparent text-mute hover:text-strong'}`}
           >
             <Icon size={15} aria-hidden /> {label}
           </button>
@@ -64,7 +64,7 @@ function Library() {
               type="button"
               onClick={() => setParams({ d: d.id })}
               aria-current={d.id === current.id}
-              className={`w-full rounded-md border px-3 py-2.5 text-left text-sm transition ${d.id === current.id ? 'border-accent bg-raised text-white' : 'border-line text-mute hover:border-accent hover:text-white'}`}
+              className={`w-full rounded-md border px-3 py-2.5 text-left text-sm transition ${d.id === current.id ? 'border-accent bg-raised text-strong' : 'border-line text-mute hover:border-accent hover:text-strong'}`}
             >
               <span className="flex items-start gap-2 font-medium">
                 <FileText size={15} className="mt-0.5 shrink-0 text-accent" aria-hidden /> {d.title}
@@ -77,17 +77,17 @@ function Library() {
 
       <div className="min-w-0">
         <Card className="mb-3 p-4">
-          <h2 className="font-semibold text-white">{current.title}</h2>
+          <h2 className="font-semibold text-strong">{current.title}</h2>
           <p className="mt-1 text-sm text-mute">{current.usage}</p>
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <CopyButton text={current.markdown} label="Copier le Markdown" />
-            <button type="button" onClick={() => downloadMarkdown(current.id, current.markdown)} className="inline-flex items-center gap-1.5 rounded border border-line px-2 py-1 text-xs text-mute transition hover:border-accent hover:text-white">
+            <button type="button" onClick={() => downloadMarkdown(current.id, current.markdown)} className="inline-flex items-center gap-1.5 rounded border border-line px-2 py-1 text-xs text-mute transition hover:border-accent hover:text-strong">
               <Download size={13} aria-hidden /> Exporter (.md)
             </button>
             <span className="text-xs text-mute">{lines} lignes</span>
           </div>
         </Card>
-        <pre tabIndex={0} className="max-h-[70vh] overflow-auto rounded-md border border-line bg-[#0b111d] p-4 font-mono text-[12.5px] leading-relaxed whitespace-pre-wrap text-slate-200">
+        <pre tabIndex={0} className="max-h-[70vh] overflow-auto rounded-md border border-line bg-code p-4 font-mono text-[12.5px] leading-relaxed whitespace-pre-wrap text-ink">
           {current.markdown}
         </pre>
       </div>
@@ -119,7 +119,7 @@ function Interviews() {
     <>
       <Card className="mb-4 flex flex-wrap items-center gap-x-6 gap-y-3 p-4">
         <div className="min-w-48 flex-1">
-          <p className="mb-1.5 text-sm text-white">
+          <p className="mb-1.5 text-sm text-strong">
             <span className="font-mono font-bold">
               {mastered}/{interviewQuestions.length}
             </span>{' '}
@@ -172,9 +172,9 @@ function QuestionCard({ q, highlight, mark, onMark }: { q: InterviewQuestion; hi
         )}
         {mark === 'a-revoir' && <span className="text-xs text-amber">À retravailler</span>}
       </div>
-      <h3 className="mt-2 font-semibold text-white">{q.question}</h3>
+      <h3 className="mt-2 font-semibold text-strong">{q.question}</h3>
 
-      <button type="button" onClick={() => setOpen((o) => !o)} className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:text-white" aria-expanded={open}>
+      <button type="button" onClick={() => setOpen((o) => !o)} className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:text-strong" aria-expanded={open}>
         {open ? <EyeOff size={14} aria-hidden /> : <Eye size={14} aria-hidden />} {open ? 'Masquer la correction' : 'Révéler la correction'}
       </button>
 
@@ -200,14 +200,14 @@ function QuestionCard({ q, highlight, mark, onMark }: { q: InterviewQuestion; hi
           </div>
           <div className="flex flex-wrap items-center gap-2 border-t border-line pt-3">
             <span className="text-xs text-mute">Votre réponse était-elle à ce niveau ?</span>
-            <button type="button" onClick={() => onMark('maitrise')} className={`inline-flex items-center gap-1 rounded border px-2 py-1 text-xs ${mark === 'maitrise' ? 'border-emerald bg-emerald/15 text-white' : 'border-line text-mute hover:text-white'}`}>
+            <button type="button" onClick={() => onMark('maitrise')} className={`inline-flex items-center gap-1 rounded border px-2 py-1 text-xs ${mark === 'maitrise' ? 'border-emerald bg-emerald/15 text-strong' : 'border-line text-mute hover:text-strong'}`}>
               <ThumbsUp size={12} aria-hidden /> Je maîtrise
             </button>
-            <button type="button" onClick={() => onMark('a-revoir')} className={`inline-flex items-center gap-1 rounded border px-2 py-1 text-xs ${mark === 'a-revoir' ? 'border-amber bg-amber/15 text-white' : 'border-line text-mute hover:text-white'}`}>
+            <button type="button" onClick={() => onMark('a-revoir')} className={`inline-flex items-center gap-1 rounded border px-2 py-1 text-xs ${mark === 'a-revoir' ? 'border-amber bg-amber/15 text-strong' : 'border-line text-mute hover:text-strong'}`}>
               <ThumbsDown size={12} aria-hidden /> À retravailler
             </button>
             {mark && (
-              <button type="button" onClick={() => onMark(null)} className="inline-flex items-center gap-1 text-xs text-mute hover:text-white">
+              <button type="button" onClick={() => onMark(null)} className="inline-flex items-center gap-1 text-xs text-mute hover:text-strong">
                 <RotateCcw size={12} aria-hidden /> Effacer
               </button>
             )}

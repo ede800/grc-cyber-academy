@@ -18,7 +18,7 @@ export function Rich({ text }: { text: string }) {
         }
         if (part.startsWith('**') && part.endsWith('**') && part.length > 3) {
           return (
-            <strong key={i} className="font-semibold text-white">
+            <strong key={i} className="font-semibold text-strong">
               {part.slice(2, -2)}
             </strong>
           )
@@ -47,7 +47,7 @@ export function CopyButton({ text, label = 'Copier' }: { text: string; label?: s
         setState((await copyText(text)) ? 'ok' : 'ko')
         setTimeout(() => setState('idle'), 1600)
       }}
-      className="no-print inline-flex shrink-0 items-center gap-1.5 rounded border border-line px-2 py-1 font-sans text-xs text-mute transition hover:border-accent hover:text-white"
+      className="no-print inline-flex shrink-0 items-center gap-1.5 rounded border border-line px-2 py-1 font-sans text-xs text-mute transition hover:border-accent hover:text-strong"
     >
       {state === 'ok' ? <Check size={13} className="text-emerald" /> : <Copy size={13} />}
       {state === 'ok' ? 'Copié' : state === 'ko' ? 'Échec' : label}
@@ -58,14 +58,14 @@ export function CopyButton({ text, label = 'Copier' }: { text: string; label?: s
 /** Livrable type (politique, clause, mémo) : texte brut copiable, lisible comme un document. */
 export function DocBlock({ title, content }: { title: string; content: string }) {
   return (
-    <figure className="my-4 overflow-hidden rounded-md border border-line bg-[#0b111d]">
+    <figure className="my-4 overflow-hidden rounded-md border border-line bg-code">
       <figcaption className="flex items-center justify-between gap-3 border-b border-line px-3 py-1.5">
         <span className="flex min-w-0 items-center gap-2 truncate text-xs text-mute">
           <FileText size={13} className="shrink-0 text-accent" aria-hidden /> {title}
         </span>
         <CopyButton text={content} />
       </figcaption>
-      <pre tabIndex={0} className="overflow-x-auto p-3 font-mono text-[12.5px] leading-relaxed whitespace-pre-wrap text-slate-200">
+      <pre tabIndex={0} className="overflow-x-auto p-3 font-mono text-[12.5px] leading-relaxed whitespace-pre-wrap text-ink">
         {content}
       </pre>
     </figure>
@@ -96,7 +96,7 @@ export function DataTable({ headers, rows }: { headers: string[]; rows: string[]
           {rows.map((row, i) => (
             <tr key={i} className="border-t border-line align-top">
               {row.map((cell, j) => (
-                <td key={j} className={`px-3 py-2 ${j === 0 ? 'font-medium text-white' : ''}`}>
+                <td key={j} className={`px-3 py-2 ${j === 0 ? 'font-medium text-strong' : ''}`}>
                   <Rich text={cell} />
                 </td>
               ))}
@@ -117,7 +117,7 @@ export function BlockView({ block }: { block: Block }) {
         </p>
       )
     case 'h':
-      return <h4 className="mt-6 mb-2 font-semibold text-white">{block.text}</h4>
+      return <h4 className="mt-6 mb-2 font-semibold text-strong">{block.text}</h4>
     case 'list': {
       const Tag = block.ordered ? 'ol' : 'ul'
       return (
@@ -139,7 +139,7 @@ export function BlockView({ block }: { block: Block }) {
         <ul className="my-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
           {block.items.map((item) => (
             <li key={item.to}>
-              <Link to={item.to} className="flex h-full items-center justify-between gap-2 rounded-md border border-line bg-card p-3 text-sm font-medium text-white transition hover:border-accent">
+              <Link to={item.to} className="flex h-full items-center justify-between gap-2 rounded-md border border-line bg-card p-3 text-sm font-medium text-strong transition hover:border-accent">
                 {item.label} <ArrowRight size={14} className="shrink-0 text-accent" aria-hidden />
               </Link>
             </li>
@@ -152,7 +152,7 @@ export function BlockView({ block }: { block: Block }) {
         <aside className={`my-4 flex gap-3 rounded-md border-y border-r border-l-4 p-3 ${c.cls}`}>
           <c.icon size={18} className={`mt-0.5 shrink-0 ${c.ic}`} aria-hidden />
           <div>
-            <p className="font-semibold text-white">
+            <p className="font-semibold text-strong">
               <Rich text={block.title} />
             </p>
             <p className="mt-1 text-sm">
@@ -188,7 +188,7 @@ export function PageHeader({ eyebrow, title, children }: { eyebrow?: string; tit
   return (
     <header className="mb-6">
       {eyebrow && <p className="mb-1 font-mono text-xs tracking-widest text-accent uppercase">{eyebrow}</p>}
-      <h1 className="text-2xl font-bold text-white sm:text-3xl">{title}</h1>
+      <h1 className="text-2xl font-bold text-strong sm:text-3xl">{title}</h1>
       {children && <div className="mt-2 max-w-3xl text-mute">{children}</div>}
     </header>
   )
@@ -236,7 +236,7 @@ export function Segmented<T extends string | number>({
           disabled={disabled}
           onClick={() => onChange(o)}
           className={`rounded-md border px-3 py-1.5 text-sm transition disabled:cursor-not-allowed ${
-            value === o ? 'border-accent bg-accent/15 font-medium text-white' : 'border-line text-mute hover:border-accent hover:text-white'
+            value === o ? 'border-accent bg-accent/15 font-medium text-strong' : 'border-line text-mute hover:border-accent hover:text-strong'
           }`}
         >
           {render ? render(o) : o}
@@ -251,7 +251,7 @@ export const inputCls =
 export const btnPrimary =
   'inline-flex items-center justify-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-50'
 export const btnGhost =
-  'inline-flex items-center justify-center gap-2 rounded-md border border-line px-3 py-2 text-sm text-ink transition hover:border-accent hover:text-white'
+  'inline-flex items-center justify-center gap-2 rounded-md border border-line px-3 py-2 text-sm text-ink transition hover:border-accent hover:text-strong'
 
 /** Bandeau d'avancement d'un simulateur : où j'en suis et quel dossier ouvrir ensuite. */
 export function ListSummary({ done, total, scores, next, unit }: { done: number; total: number; scores: number[]; next?: { to: string; label: string }; unit: string }) {
@@ -260,7 +260,7 @@ export function ListSummary({ done, total, scores, next, unit }: { done: number;
     <Card className="mb-5 flex flex-wrap items-center gap-x-6 gap-y-3 p-4">
       <div className="min-w-48 flex-1">
         <p className="mb-1.5 flex items-baseline justify-between gap-3 text-sm">
-          <span className="text-white">
+          <span className="text-strong">
             <span className="font-mono font-bold">
               {done}/{total}
             </span>{' '}

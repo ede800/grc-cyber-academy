@@ -30,7 +30,7 @@ export function ContractList() {
                 <Tag>Dossier {String(i + 1).padStart(2, '0')}</Tag>
                 <StatusBadge score={progress.contracts[c.id]} />
               </div>
-              <h2 className="mt-2 font-semibold text-white">{c.title}</h2>
+              <h2 className="mt-2 font-semibold text-strong">{c.title}</h2>
               <p className="mt-0.5 text-xs text-accent">{c.contractType}</p>
               <p className="mt-2 text-sm text-mute">{c.context}</p>
             </Link>
@@ -44,7 +44,7 @@ export function ContractList() {
 /** Clause fournisseur : après correction, les passages piégés sont barrés en rouge, comme dans une revue juridique. */
 function VendorClause({ c, revealed, selected }: { c: ContractCase; revealed: boolean; selected: string[] }) {
   return (
-    <p className="font-serif text-[15px] leading-relaxed text-slate-200">
+    <p className="font-serif text-[15px] leading-relaxed text-ink">
       {c.excerpt.map((seg, i) => {
         if (!seg.trap || !revealed) return <span key={i}>{seg.text}</span>
         const found = selected.includes(seg.trap)
@@ -95,7 +95,7 @@ function ContractExercise({ c }: { c: ContractCase }) {
 
   return (
     <>
-      <Link to="/contrats" className="mb-3 inline-flex items-center gap-1 text-sm text-mute hover:text-white">
+      <Link to="/contrats" className="mb-3 inline-flex items-center gap-1 text-sm text-mute hover:text-strong">
         <ArrowLeft size={14} aria-hidden /> Tous les dossiers
       </Link>
       <PageHeader eyebrow={`Redliner · ${c.contractType}`} title={c.title}>
@@ -160,7 +160,7 @@ function ContractExercise({ c }: { c: ContractCase }) {
 
         <div className="space-y-4">
           <Card className="p-5">
-            <h2 className="font-semibold text-white">1. Quels sont les pièges ?</h2>
+            <h2 className="font-semibold text-strong">1. Quels sont les pièges ?</h2>
             <p className="mb-3 text-xs text-mute">Cochez uniquement les stipulations dangereuses pour le client : les fausses alertes coûtent des points.</p>
             <ul className="space-y-2">
               {issues.map((i) => {
@@ -177,7 +177,7 @@ function ContractExercise({ c }: { c: ContractCase }) {
                         className="mt-0.5 size-4 shrink-0 accent-blue-500"
                       />
                       <span>
-                        <span className="text-white">{i.label}</span>
+                        <span className="text-strong">{i.label}</span>
                         {submitted && (
                           <span className="mt-1 block text-xs text-mute">
                             <span className={i.isTrap ? 'font-semibold text-red-300' : 'font-semibold text-emerald'}>{i.isTrap ? 'Piège. ' : 'Pas un piège. '}</span>
@@ -193,7 +193,7 @@ function ContractExercise({ c }: { c: ContractCase }) {
           </Card>
 
           <Card className="p-5">
-            <h2 className="mb-3 font-semibold text-white">2. Niveau de risque pour le client</h2>
+            <h2 className="mb-3 font-semibold text-strong">2. Niveau de risque pour le client</h2>
             <Segmented options={RISK_LEVELS} value={level} onChange={setLevel} label="Niveau de risque" disabled={submitted} render={(l) => <LevelBadge level={l} />} />
             {submitted && (
               <p className="mt-3 text-sm">
@@ -204,7 +204,7 @@ function ContractExercise({ c }: { c: ContractCase }) {
           </Card>
 
           <Card className="p-5">
-            <h2 className="mb-3 font-semibold text-white">3. Contre-proposition (redline)</h2>
+            <h2 className="mb-3 font-semibold text-strong">3. Contre-proposition (redline)</h2>
             <div role="radiogroup" aria-label="Contre-proposition" className="space-y-2">
               {counters.map((o) => {
                 const selected = counter === o.id
@@ -215,7 +215,7 @@ function ContractExercise({ c }: { c: ContractCase }) {
                     {submitted && o.correct && <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-emerald" aria-label="Bonne réponse" />}
                     {submitted && selected && !o.correct && <XCircle size={16} className="mt-0.5 shrink-0 text-crimson" aria-label="Votre choix, incorrect" />}
                     <span>
-                      <span className="font-medium text-white">{o.label}</span>
+                      <span className="font-medium text-strong">{o.label}</span>
                       <span className="mt-0.5 block text-xs text-mute">{o.text}</span>
                     </span>
                   </button>
@@ -224,7 +224,7 @@ function ContractExercise({ c }: { c: ContractCase }) {
             </div>
             {submitted && chosen && (
               <p className="mt-3 rounded-md border border-line bg-raised p-3 text-sm">
-                <span className="font-semibold text-white">{chosen.correct ? 'Bon choix. ' : 'À revoir. '}</span>
+                <span className="font-semibold text-strong">{chosen.correct ? 'Bon choix. ' : 'À revoir. '}</span>
                 {chosen.feedback}
               </p>
             )}

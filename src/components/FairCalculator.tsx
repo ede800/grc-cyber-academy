@@ -33,7 +33,7 @@ function TripleField({ label, value, onChange, help }: { label: string; value: T
   const set = (i: number) => (v: number) => onChange(value.map((x, j) => (j === i ? v : x)) as Triple)
   return (
     <fieldset className="rounded-md border border-line p-3">
-      <legend className="px-1 text-xs font-semibold text-white">{label}</legend>
+      <legend className="px-1 text-xs font-semibold text-strong">{label}</legend>
       <p className="mb-2 text-[11px] text-mute">{help}</p>
       <div className="grid grid-cols-3 gap-2">
         <NumberField label="Min" value={value[0]} onChange={set(0)} suffix="€" step={10000} />
@@ -98,7 +98,7 @@ Hypothèses à valider avec la finance et les métiers.`
         </Card>
 
         <Card className="space-y-3 p-4">
-          <h2 className="flex items-center gap-2 font-semibold text-white">
+          <h2 className="flex items-center gap-2 font-semibold text-strong">
             <Calculator size={16} className="text-accent" aria-hidden /> 1. Ampleur des pertes (SLE)
           </h2>
           <TripleField label="Pertes primaires" value={input.primary} onChange={(primary) => setInput({ ...input, primary })} help="Arrêt d’activité, réponse à incident, reconstruction, remplacement." />
@@ -106,7 +106,7 @@ Hypothèses à valider avec la finance et les métiers.`
         </Card>
 
         <Card className="space-y-3 p-4">
-          <h2 className="font-semibold text-white">2. Fréquence (ARO)</h2>
+          <h2 className="font-semibold text-strong">2. Fréquence (ARO)</h2>
           <div className="grid grid-cols-2 gap-3">
             <NumberField label="Tentatives par an (TEF)" value={input.tef} onChange={(tef) => setInput({ ...input, tef })} step={0.1} />
             <NumberField label="Probabilité de succès" value={Math.round(input.vulnerability * 100)} onChange={(v) => setInput({ ...input, vulnerability: v / 100 })} suffix="%" max={100} />
@@ -114,7 +114,7 @@ Hypothèses à valider avec la finance et les métiers.`
         </Card>
 
         <Card className="space-y-3 p-4">
-          <h2 className="font-semibold text-white">3. Mesure de sécurité envisagée</h2>
+          <h2 className="font-semibold text-strong">3. Mesure de sécurité envisagée</h2>
           <label className="block text-xs text-mute">
             Intitulé
             <input value={control.name} onChange={(e) => setControl({ ...control, name: e.target.value })} className={`${inputCls} mt-1`} />
@@ -138,7 +138,7 @@ Hypothèses à valider avec la finance et les métiers.`
             ].map((k) => (
               <div key={k.label} className="rounded-md border border-line bg-bg p-2">
                 <p className="font-mono text-[11px] text-accent">{k.label}</p>
-                <p className="mt-0.5 font-mono text-sm font-bold text-white sm:text-base">{k.value}</p>
+                <p className="mt-0.5 font-mono text-sm font-bold text-strong sm:text-base">{k.value}</p>
                 <p className="text-[10px] text-mute">{k.hint}</p>
               </div>
             ))}
@@ -154,7 +154,7 @@ Hypothèses à valider avec la finance et les métiers.`
               <div key={b.label}>
                 <p className="mb-1 flex justify-between text-xs">
                   <span className="text-mute">{b.label}</span>
-                  <span className="font-mono text-white">{eur(b.value)}</span>
+                  <span className="font-mono text-strong">{eur(b.value)}</span>
                 </p>
                 <div className="h-2 overflow-hidden rounded-full bg-line">
                   <div className={`h-full rounded-full ${b.cls} transition-all duration-500`} style={{ width: `${Math.min(100, (b.value / maxAle) * 100)}%` }} />

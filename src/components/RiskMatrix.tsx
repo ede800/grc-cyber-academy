@@ -38,15 +38,15 @@ export function RiskMatrix({ markers, onPick, compact = false }: { markers: Matr
                     key={l}
                     role="gridcell"
                     {...(onPick ? { type: 'button' as const, onClick: () => onPick(g, l), 'aria-label': `Gravité ${g}, vraisemblance ${l}, score ${g * l}` } : {})}
-                    className={`relative flex ${size} flex-wrap items-center justify-center gap-0.5 rounded ${CELL[level]} ${onPick ? 'transition hover:ring-2 hover:ring-white/40' : ''}`}
+                    className={`relative flex ${size} flex-wrap items-center justify-center gap-0.5 rounded ${CELL[level]} ${onPick ? 'transition hover:ring-2 hover:ring-strong/40' : ''}`}
                   >
-                    <span className="absolute top-0.5 left-1 font-mono text-[9px] text-white/40">{g * l}</span>
+                    <span className="absolute top-0.5 left-1 font-mono text-[9px] text-strong/40">{g * l}</span>
                     {here.map((m) => (
                       <span
                         key={m.key}
                         title={`${m.label} (${m.kind === 'brut' ? 'brut' : 'résiduel'} : ${g * l})`}
                         className={`flex min-w-5 items-center justify-center rounded-full px-1 font-mono text-[10px] font-bold ${
-                          m.kind === 'brut' ? 'border-2 border-white/80 text-white' : 'bg-white text-slate-900'
+                          m.kind === 'brut' ? 'border-2 border-strong/80 text-strong' : 'bg-strong text-bg'
                         } ${compact ? 'h-4 min-w-4 text-[9px]' : 'h-5'}`}
                       >
                         {m.label}

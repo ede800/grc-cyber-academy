@@ -90,9 +90,9 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
             }}
             placeholder="Thème, mesure ISO (A.8.8), article (Art. 21), clause, fournisseur…"
             aria-label="Rechercher"
-            className="w-full bg-transparent py-3.5 text-sm text-white placeholder:text-slate-500 focus:outline-none"
+            className="w-full bg-transparent py-3.5 text-sm text-strong placeholder:text-slate-500 focus:outline-none"
           />
-          <button type="button" onClick={onClose} aria-label="Fermer" className="text-mute hover:text-white">
+          <button type="button" onClick={onClose} aria-label="Fermer" className="text-mute hover:text-strong">
             <X size={18} />
           </button>
         </div>
@@ -103,7 +103,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
               <li key={hit.key} role="option" aria-selected={i === cursor}>
                 <button type="button" onMouseEnter={() => setCursor(i)} onClick={() => go(hit.to)} className={`w-full rounded-md px-3 py-2 text-left ${i === cursor ? 'bg-raised' : ''}`}>
                   <span className="flex items-baseline justify-between gap-2">
-                    <span className="truncate text-sm font-semibold text-white">{hit.label}</span>
+                    <span className="truncate text-sm font-semibold text-strong">{hit.label}</span>
                     <span className={`shrink-0 text-[11px] ${KIND_CLS[hit.kind]}`}>{hit.kind}</span>
                   </span>
                   <span className="block truncate text-xs text-mute">{hit.title}</span>
@@ -116,7 +116,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
                 <p className="mb-2">Essayez :</p>
                 <div className="flex flex-wrap gap-1.5">
                   {SUGGESTIONS.map((s) => (
-                    <button key={s} type="button" onClick={() => setQuery(s)} className="rounded border border-line px-2 py-0.5 text-xs hover:border-accent hover:text-white">
+                    <button key={s} type="button" onClick={() => setQuery(s)} className="rounded border border-line px-2 py-0.5 text-xs hover:border-accent hover:text-strong">
                       {s}
                     </button>
                   ))}
@@ -128,7 +128,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
           {current && (
             <div className="hidden min-h-0 overflow-y-auto border-l border-line p-4 text-sm md:block">
               <Tag>{current.kind}</Tag>
-              <h2 className="mt-2 text-lg font-bold text-white">{current.label}</h2>
+              <h2 className="mt-2 text-lg font-bold text-strong">{current.label}</h2>
               <p className="text-mute">{current.title}</p>
               {current.detail && (
                 <p className="mt-3">
@@ -140,7 +140,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
                   {current.refs.map((r) => (
                     <div key={r.name}>
                       <dt className="text-[11px] font-semibold tracking-wide text-accent uppercase">{r.name}</dt>
-                      <dd className="mt-0.5 font-mono text-xs leading-relaxed text-slate-200">{r.values.join(' · ')}</dd>
+                      <dd className="mt-0.5 font-mono text-xs leading-relaxed text-ink">{r.values.join(' · ')}</dd>
                     </div>
                   ))}
                 </dl>

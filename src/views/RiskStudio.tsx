@@ -59,7 +59,7 @@ export function RiskList() {
             role="tab"
             aria-selected={tab === t.id}
             onClick={() => setParams(t.id === 'fair' ? { tab: 'fair' } : {})}
-            className={`-mb-px flex shrink-0 items-center gap-2 border-b-2 px-3 py-2.5 text-sm transition ${tab === t.id ? 'border-accent font-medium text-white' : 'border-transparent text-mute hover:text-white'}`}
+            className={`-mb-px flex shrink-0 items-center gap-2 border-b-2 px-3 py-2.5 text-sm transition ${tab === t.id ? 'border-accent font-medium text-strong' : 'border-transparent text-mute hover:text-strong'}`}
           >
             <t.icon size={15} aria-hidden /> {t.label}
           </button>
@@ -124,7 +124,7 @@ function Register() {
                   <tr key={r.id} onClick={() => navigate(`/risques/${r.id}`)} className="cursor-pointer border-t border-line align-top transition hover:bg-raised/50">
                     <td className="px-3 py-2 font-mono text-xs text-mute">{r.code}</td>
                     <td className="px-3 py-2">
-                      <Link to={`/risques/${r.id}`} className="font-medium text-white hover:text-accent">
+                      <Link to={`/risques/${r.id}`} className="font-medium text-strong hover:text-accent">
                         {r.title}
                       </Link>
                       <p className="text-xs text-mute">{r.asset}</p>
@@ -142,21 +142,21 @@ function Register() {
 
         <div className="space-y-4">
           <Card className="p-4">
-            <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-white">
+            <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-strong">
               <Grid3x3 size={15} className="text-accent" aria-hidden /> Cartographie du registre
             </p>
             {markers.length ? <RiskMatrix markers={markers} compact /> : <p className="text-sm text-mute">Cotez un premier scénario pour l’afficher ici.</p>}
             <p className="mt-2 flex gap-4 text-[11px] text-mute">
               <span className="flex items-center gap-1">
-                <span className="inline-block size-3 rounded-full border-2 border-white/80" /> Brut
+                <span className="inline-block size-3 rounded-full border-2 border-strong/80" /> Brut
               </span>
               <span className="flex items-center gap-1">
-                <span className="inline-block size-3 rounded-full bg-white" /> Résiduel
+                <span className="inline-block size-3 rounded-full bg-strong" /> Résiduel
               </span>
             </p>
           </Card>
           <Card className="p-4">
-            <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-white">
+            <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-strong">
               <FilePlus2 size={15} className="text-accent" aria-hidden /> Ajouter un risque de votre organisation
             </p>
             <label className="text-xs text-mute" htmlFor="risk-title">
@@ -253,7 +253,7 @@ function RiskEditor({ scenario, custom }: { scenario?: RiskScenario; custom?: Cu
 
   return (
     <>
-      <Link to="/risques" className="mb-3 inline-flex items-center gap-1 text-sm text-mute hover:text-white">
+      <Link to="/risques" className="mb-3 inline-flex items-center gap-1 text-sm text-mute hover:text-strong">
         <ArrowLeft size={14} aria-hidden /> Registre des risques
       </Link>
       <PageHeader eyebrow={scenario ? 'Scénario de risque' : 'Risque personnalisé'} title={title}>
@@ -285,19 +285,19 @@ function RiskEditor({ scenario, custom }: { scenario?: RiskScenario; custom?: Cu
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_24rem]">
         <div className="space-y-4">
           <Card className="p-5">
-            <h2 className="font-semibold text-white">1. Risque brut (inhérent)</h2>
+            <h2 className="font-semibold text-strong">1. Risque brut (inhérent)</h2>
             <p className="mb-3 text-xs text-mute">Sans tenir compte des mesures à ajouter. Cliquez dans la matrice ou utilisez les échelles.</p>
             <p className="mb-1 text-xs text-mute">Gravité</p>
             <Segmented options={[1, 2, 3, 4, 5]} value={entry.gravity} onChange={(gravity) => update({ gravity })} label="Gravité" render={(v) => `${v} · ${GRAVITY[v - 1]}`} />
             <p className="mt-3 mb-1 text-xs text-mute">Vraisemblance</p>
             <Segmented options={[1, 2, 3, 4, 5]} value={entry.likelihood} onChange={(likelihood) => update({ likelihood })} label="Vraisemblance" render={(v) => `${v} · ${LIKELIHOOD[v - 1]}`} />
             <p className="mt-3 text-sm">
-              Score brut : <span className="font-mono font-bold text-white">{inh}</span> <LevelBadge level={levelOf(inh)} />
+              Score brut : <span className="font-mono font-bold text-strong">{inh}</span> <LevelBadge level={levelOf(inh)} />
             </p>
           </Card>
 
           <Card className="p-5">
-            <h2 className="font-semibold text-white">2. Mesures de sécurité (ISO 27002 / NIST CSF)</h2>
+            <h2 className="font-semibold text-strong">2. Mesures de sécurité (ISO 27002 / NIST CSF)</h2>
             <p className="mb-3 text-xs text-mute">Chaque mesure réduit la vraisemblance (V) ou la gravité (G). Ne retenez que ce qui traite réellement ce scénario.</p>
             <ul className="grid grid-cols-1 gap-2 md:grid-cols-2">
               {riskControls.map((c) => {
@@ -308,7 +308,7 @@ function RiskEditor({ scenario, custom }: { scenario?: RiskScenario; custom?: Cu
                     <label className={`flex h-full cursor-pointer items-start gap-2.5 rounded-md border p-2.5 text-sm ${on ? 'border-accent bg-accent/10' : 'border-line hover:border-accent'} ${key ? 'ring-1 ring-emerald' : ''}`}>
                       <input type="checkbox" checked={on} onChange={() => update({ controls: on ? entry.controls.filter((x) => x !== c.id) : [...entry.controls, c.id] })} className="mt-0.5 size-4 shrink-0 accent-blue-500" />
                       <span>
-                        <span className="text-white">{c.label}</span>
+                        <span className="text-strong">{c.label}</span>
                         <span className="mt-0.5 block font-mono text-[11px] text-mute">
                           {c.ref}
                           {c.effect.likelihood > 0 && ` · V −${c.effect.likelihood}`}
@@ -324,7 +324,7 @@ function RiskEditor({ scenario, custom }: { scenario?: RiskScenario; custom?: Cu
           </Card>
 
           <Card className="p-5">
-            <h2 className="mb-3 font-semibold text-white">3. Option de traitement</h2>
+            <h2 className="mb-3 font-semibold text-strong">3. Option de traitement</h2>
             <div role="radiogroup" aria-label="Option de traitement" className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               {TREATMENTS.map((t) => (
                 <button
@@ -335,7 +335,7 @@ function RiskEditor({ scenario, custom }: { scenario?: RiskScenario; custom?: Cu
                   onClick={() => update({ treatment: t })}
                   className={`rounded-md border p-3 text-left text-sm ${entry.treatment === t ? 'border-accent bg-accent/10' : 'border-line hover:border-accent'}`}
                 >
-                  <span className="font-semibold text-white">{t}</span>
+                  <span className="font-semibold text-strong">{t}</span>
                   <span className="block text-xs text-mute">{TREATMENT_HELP[t]}</span>
                 </button>
               ))}
@@ -359,13 +359,13 @@ function RiskEditor({ scenario, custom }: { scenario?: RiskScenario; custom?: Cu
             <dl className="mt-3 grid grid-cols-2 gap-2 text-sm">
               <div className="rounded-md border border-line p-2">
                 <dt className="text-[11px] text-mute uppercase">Brut</dt>
-                <dd className="font-mono text-lg font-bold text-white">
+                <dd className="font-mono text-lg font-bold text-strong">
                   {inh} <LevelBadge level={levelOf(inh)} />
                 </dd>
               </div>
               <div className="rounded-md border border-line p-2">
                 <dt className="text-[11px] text-mute uppercase">Résiduel</dt>
-                <dd className="font-mono text-lg font-bold text-white">
+                <dd className="font-mono text-lg font-bold text-strong">
                   {resScore} <LevelBadge level={levelOf(resScore)} />
                 </dd>
               </div>
@@ -423,7 +423,7 @@ function RiskEditor({ scenario, custom }: { scenario?: RiskScenario; custom?: Cu
       {(submitted || custom) && entry.treatment && (
         <section className="mt-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-white">Mémo exécutif de décision</h2>
+            <h2 className="text-lg font-bold text-strong">Mémo exécutif de décision</h2>
             <CopyButton text={buildMemo(title, asset, entry, res)} label="Copier le mémo" />
           </div>
           <DocBlock title="Mémo d’acceptation / de traitement du risque" content={buildMemo(title, asset, entry, res)} />

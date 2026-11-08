@@ -70,7 +70,7 @@ export function Quiz({ questions, best, onFinish }: Props) {
         </span>
         {best !== undefined && <span>Meilleur score : {best} %</span>}
       </div>
-      <p className="font-medium text-white">
+      <p className="font-medium text-strong">
         <Rich text={q.q} />
       </p>
       {q.case && (
@@ -110,7 +110,7 @@ export function Quiz({ questions, best, onFinish }: Props) {
       </div>
       {answered && (
         <div className="mt-4 rounded-md border border-line bg-raised p-3 text-sm" aria-live="polite">
-          <p className="mb-1 font-semibold text-white">{choice === q.answer ? 'Exact.' : 'Pas tout à fait.'}</p>
+          <p className="mb-1 font-semibold text-strong">{choice === q.answer ? 'Exact.' : 'Pas tout à fait.'}</p>
           <Rich text={q.explain} />
           <div className="mt-3 text-right">
             <button type="button" onClick={next} className={btnPrimary}>

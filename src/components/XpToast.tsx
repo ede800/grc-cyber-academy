@@ -35,7 +35,7 @@ export function XpToast() {
           <div className="leading-tight">
             <p className="font-mono text-sm font-bold text-emerald">+{toast.gain} XP</p>
             {toast.rank ? (
-              <p className="text-sm text-white">
+              <p className="text-sm text-strong">
                 Promotion : <span className="font-semibold">{toast.rank}</span>
               </p>
             ) : (

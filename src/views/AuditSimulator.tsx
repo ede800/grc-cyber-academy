@@ -37,7 +37,7 @@ export function AuditList() {
                 <Tag>Situation {String(i + 1).padStart(2, '0')}</Tag>
                 <StatusBadge score={progress.audits[c.id]} />
               </div>
-              <h2 className="mt-2 font-semibold text-white">{c.title}</h2>
+              <h2 className="mt-2 font-semibold text-strong">{c.title}</h2>
               <p className="mt-0.5 text-xs text-accent">{c.scope}</p>
               <p className="mt-2 text-sm text-mute">{c.auditee}</p>
             </Link>
@@ -82,7 +82,7 @@ function Choices<T extends { id: string; label: string; correct: boolean }>({
             {submitted && o.correct && <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-emerald" aria-label="Bonne réponse" />}
             {submitted && selected && !o.correct && <XCircle size={16} className="mt-0.5 shrink-0 text-crimson" aria-label="Votre choix, incorrect" />}
             <span>
-              <span className="text-white">{o.label}</span>
+              <span className="text-strong">{o.label}</span>
               {submitted && (selected || o.correct) && <span className="mt-1 block text-xs text-mute">{detail(o)}</span>}
             </span>
           </button>
@@ -127,7 +127,7 @@ function AuditExercise({ c }: { c: AuditCase }) {
 
   return (
     <>
-      <Link to="/audit" className="mb-3 inline-flex items-center gap-1 text-sm text-mute hover:text-white">
+      <Link to="/audit" className="mb-3 inline-flex items-center gap-1 text-sm text-mute hover:text-strong">
         <ArrowLeft size={14} aria-hidden /> Toutes les situations
       </Link>
       <PageHeader eyebrow={`Audit · ${c.scope}`} title={c.title}>
@@ -175,13 +175,13 @@ function AuditExercise({ c }: { c: AuditCase }) {
             </p>
             <div role="tablist" className="mb-3 flex flex-wrap gap-1.5">
               {c.evidence.map((e, i) => (
-                <button key={e.name} type="button" role="tab" aria-selected={doc === i} onClick={() => setDoc(i)} className={`rounded-md border px-2.5 py-1 text-xs ${doc === i ? 'border-amber bg-amber/10 text-white' : 'border-line text-mute hover:text-white'}`}>
+                <button key={e.name} type="button" role="tab" aria-selected={doc === i} onClick={() => setDoc(i)} className={`rounded-md border px-2.5 py-1 text-xs ${doc === i ? 'border-amber bg-amber/10 text-strong' : 'border-line text-mute hover:text-strong'}`}>
                   {e.name}
                 </button>
               ))}
             </div>
             <p className="mb-1 text-[11px] tracking-wide text-mute uppercase">{c.evidence[doc].kind}</p>
-            <pre tabIndex={0} className="overflow-x-auto rounded-md border border-line bg-[#0b111d] p-3 font-mono text-[12.5px] leading-relaxed whitespace-pre-wrap text-slate-200">
+            <pre tabIndex={0} className="overflow-x-auto rounded-md border border-line bg-code p-3 font-mono text-[12.5px] leading-relaxed whitespace-pre-wrap text-ink">
               {c.evidence[doc].content}
             </pre>
           </Card>
@@ -201,7 +201,7 @@ function AuditExercise({ c }: { c: AuditCase }) {
 
         <div className="space-y-4">
           <Card className="p-5">
-            <h2 className="font-semibold text-white">1. Exigence(s) en cause</h2>
+            <h2 className="font-semibold text-strong">1. Exigence(s) en cause</h2>
             <p className="mb-3 text-xs text-mute">Cochez la ou les références pertinentes : les mauvaises références coûtent des points.</p>
             <ul className="space-y-2">
               {refsOrder.map((r) => {
@@ -212,7 +212,7 @@ function AuditExercise({ c }: { c: AuditCase }) {
                     <label className={`flex cursor-pointer items-start gap-2.5 rounded-md border p-3 text-sm ${submitted ? (right ? 'border-emerald/50' : 'border-crimson/60') : checked ? 'border-accent bg-accent/10' : 'border-line hover:border-accent'}`}>
                       <input type="checkbox" disabled={submitted} checked={checked} onChange={() => setRefs((l) => (l.includes(r.id) ? l.filter((x) => x !== r.id) : [...l, r.id]))} className="mt-0.5 size-4 shrink-0 accent-blue-500" />
                       <span>
-                        <span className="text-white">{r.label}</span>
+                        <span className="text-strong">{r.label}</span>
                         {submitted && (
                           <span className="mt-1 block text-xs text-mute">
                             <span className={r.correct ? 'font-semibold text-emerald' : 'font-semibold text-red-300'}>{r.correct ? 'Pertinent. ' : 'Non pertinent. '}</span>
@@ -228,7 +228,7 @@ function AuditExercise({ c }: { c: AuditCase }) {
           </Card>
 
           <Card className="p-5">
-            <h2 className="mb-3 font-semibold text-white">2. Qualification du constat</h2>
+            <h2 className="mb-3 font-semibold text-strong">2. Qualification du constat</h2>
             <Segmented options={GRADES} value={grade} onChange={setGrade} label="Qualification" disabled={submitted} render={(g) => <GradeBadge grade={g} />} />
             {submitted && (
               <p className="mt-3 text-sm">
@@ -240,8 +240,8 @@ function AuditExercise({ c }: { c: AuditCase }) {
 
           <Card className="p-5">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-              <h2 className="font-semibold text-white">3. Cause racine (5 Pourquoi)</h2>
-              <button type="button" onClick={() => setShowWhys((s) => !s)} className="inline-flex items-center gap-1 text-xs text-accent hover:text-white">
+              <h2 className="font-semibold text-strong">3. Cause racine (5 Pourquoi)</h2>
+              <button type="button" onClick={() => setShowWhys((s) => !s)} className="inline-flex items-center gap-1 text-xs text-accent hover:text-strong">
                 <Search size={12} aria-hidden /> {showWhys ? 'Masquer' : 'Dérouler'} les 5 Pourquoi
               </button>
             </div>
@@ -256,7 +256,7 @@ function AuditExercise({ c }: { c: AuditCase }) {
           </Card>
 
           <Card className="p-5">
-            <h2 className="mb-3 font-semibold text-white">4. Plan d’actions correctives (CAPA)</h2>
+            <h2 className="mb-3 font-semibold text-strong">4. Plan d’actions correctives (CAPA)</h2>
             <Choices items={capaOrder} value={capa} onChange={setCapa} submitted={submitted} label="Plan d’actions" detail={(x) => x.feedback} />
           </Card>
 

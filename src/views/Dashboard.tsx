@@ -48,7 +48,7 @@ export function Dashboard() {
             <Trophy size={28} className="text-amber" aria-hidden />
             <div>
               <p className="text-xs tracking-wide text-mute uppercase">Rang actuel</p>
-              <p className="text-xl font-bold text-white">{rank.name}</p>
+              <p className="text-xl font-bold text-strong">{rank.name}</p>
               <p className="font-mono text-xs text-mute">
                 {xp} / {MAX_XP} XP{next ? ` · ${next.min - xp} XP avant ${next.name}` : ''}
               </p>
@@ -64,7 +64,7 @@ export function Dashboard() {
           {RANKS.map((r, i) => (
             <li key={r.name} className={`rounded-md border p-3 ${i === index ? 'border-accent bg-accent/10' : i < index ? 'border-emerald/50' : 'border-line opacity-70'}`}>
               <p className="font-mono text-[10px] text-mute">{r.min} XP</p>
-              <p className={`text-sm font-semibold ${i <= index ? 'text-white' : 'text-mute'}`}>{r.name}</p>
+              <p className={`text-sm font-semibold ${i <= index ? 'text-strong' : 'text-mute'}`}>{r.name}</p>
             </li>
           ))}
         </ol>
@@ -82,14 +82,14 @@ export function Dashboard() {
             <p className="flex items-center gap-1.5 text-xs text-mute">
               <s.icon size={13} className="text-accent" aria-hidden /> {s.label}
             </p>
-            <p className="mt-1 font-mono text-2xl font-bold text-white">{s.value}</p>
+            <p className="mt-1 font-mono text-2xl font-bold text-strong">{s.value}</p>
           </Card>
         ))}
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
         <section>
-          <h2 className="mb-3 flex items-center gap-2 font-semibold text-white">
+          <h2 className="mb-3 flex items-center gap-2 font-semibold text-strong">
             <BookOpen size={16} className="text-accent" aria-hidden /> Cursus
           </h2>
           <Card className="divide-y divide-line">
@@ -99,7 +99,7 @@ export function Dashboard() {
                 <Link key={m.id} to={`/modules/${m.id}`} className="flex items-center gap-3 p-3 hover:bg-raised/50">
                   <span className="w-7 font-mono text-sm font-bold text-accent">{String(m.number).padStart(2, '0')}</span>
                   <span className="min-w-0 flex-1">
-                    <span className="line-clamp-2 block text-sm leading-snug text-white">{m.title}</span>
+                    <span className="line-clamp-2 block text-sm leading-snug text-strong">{m.title}</span>
                     <span className="mt-1.5 block max-w-xs">
                       <ProgressBar value={read / m.sections.length} label={`Lecture du module ${m.number}`} />
                     </span>
@@ -113,13 +113,13 @@ export function Dashboard() {
 
         <section className="space-y-6">
           <div>
-            <h2 className="mb-3 font-semibold text-white">Simulateurs</h2>
+            <h2 className="mb-3 font-semibold text-strong">Simulateurs</h2>
             <div className="space-y-2">
               {sims.map((s) => (
                 <Link key={s.to} to={s.to} className="flex items-center gap-3 rounded-lg border border-line bg-card p-3 transition hover:border-accent">
                   <s.icon size={20} className="shrink-0 text-accent" aria-hidden />
                   <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-semibold text-white">{s.title}</span>
+                    <span className="block text-sm font-semibold text-strong">{s.title}</span>
                     <span className="block text-xs text-mute">{s.desc}</span>
                   </span>
                   <span className="text-right">
@@ -134,7 +134,7 @@ export function Dashboard() {
           </div>
 
           <div>
-            <h2 className="mb-3 flex items-center gap-2 font-semibold text-white">
+            <h2 className="mb-3 flex items-center gap-2 font-semibold text-strong">
               <Clock size={16} className="text-amber" aria-hidden /> Horloges réglementaires
             </h2>
             <Card className="divide-y divide-line">
@@ -142,7 +142,7 @@ export function Dashboard() {
                 <div key={c.reg + c.what} className="flex items-center gap-3 p-3">
                   <span className={`w-16 shrink-0 font-mono text-xl font-bold ${c.cls}`}>{c.delay}</span>
                   <span className="min-w-0 text-sm">
-                    <span className="font-semibold text-white">{c.reg}</span> · {c.what}
+                    <span className="font-semibold text-strong">{c.reg}</span> · {c.what}
                     <span className="block text-xs text-mute">{c.note}</span>
                   </span>
                 </div>

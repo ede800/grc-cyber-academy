@@ -73,7 +73,7 @@ export function ModulesList() {
                   <span className="font-mono text-3xl font-bold text-accent">{String(m.number).padStart(2, '0')}</span>
                   <div className="min-w-0 flex-1">
                     <Tag>{PILLAR[m.pillar]}</Tag>
-                    <h2 className="mt-1.5 font-semibold text-white">{m.title}</h2>
+                    <h2 className="mt-1.5 font-semibold text-strong">{m.title}</h2>
                     <p className="mt-1 text-sm text-mute">{m.summary}</p>
                   </div>
                 </div>
@@ -156,7 +156,7 @@ export function ModuleDetail() {
 
   return (
     <>
-      <Link to="/modules" className="mb-3 inline-flex items-center gap-1 text-sm text-mute hover:text-white">
+      <Link to="/modules" className="mb-3 inline-flex items-center gap-1 text-sm text-mute hover:text-strong">
         <ArrowLeft size={14} aria-hidden /> Tous les modules
       </Link>
       <PageHeader eyebrow={`Module ${module.number} / ${modules.length} · ${PILLAR[module.pillar]}`} title={module.title}>
@@ -191,7 +191,7 @@ export function ModuleDetail() {
             tabIndex={tab === t.id ? 0 : -1}
             onClick={() => setTab(t.id)}
             onKeyDown={onTabKey}
-            className={`-mb-px flex shrink-0 items-center gap-2 border-b-2 px-3 py-2.5 text-sm transition ${tab === t.id ? 'border-accent font-medium text-white' : 'border-transparent text-mute hover:text-white'}`}
+            className={`-mb-px flex shrink-0 items-center gap-2 border-b-2 px-3 py-2.5 text-sm transition ${tab === t.id ? 'border-accent font-medium text-strong' : 'border-transparent text-mute hover:text-strong'}`}
           >
             <t.icon size={15} aria-hidden /> {t.label}
             <span className={`rounded px-1.5 font-mono text-[10px] ${tab === t.id ? 'bg-accent/20 text-blue-200' : 'bg-raised text-mute'}`}>{badge[t.id]}</span>
@@ -225,7 +225,7 @@ export function ModuleDetail() {
                     type="button"
                     onClick={() => setSectionId(s.id)}
                     aria-current={s.id === section.id}
-                    className={`flex w-full items-start gap-2 rounded-md px-2.5 py-2 text-left text-sm ${s.id === section.id ? 'bg-raised text-white' : 'text-mute hover:text-white'}`}
+                    className={`flex w-full items-start gap-2 rounded-md px-2.5 py-2 text-left text-sm ${s.id === section.id ? 'bg-raised text-strong' : 'text-mute hover:text-strong'}`}
                   >
                     {read.includes(s.id) ? <CheckCircle2 size={15} className="mt-0.5 shrink-0 text-emerald" aria-label="Lu" /> : <Circle size={15} className="mt-0.5 shrink-0" aria-hidden />}
                     {s.title}
@@ -238,7 +238,7 @@ export function ModuleDetail() {
           <article className="min-w-0">
             {sectionIndex === 0 && (
               <Card className="mb-5 p-4">
-                <p className="mb-2 text-sm font-semibold text-white">À la fin de ce module, vous saurez :</p>
+                <p className="mb-2 text-sm font-semibold text-strong">À la fin de ce module, vous saurez :</p>
                 <ul className="list-disc space-y-1 pl-5 text-sm marker:text-accent">
                   {module.objectives.map((o) => (
                     <li key={o}>
@@ -255,7 +255,7 @@ export function ModuleDetail() {
                 </span>
                 <LevelPill level={section.level ?? 'O'} />
               </p>
-              <h2 className="text-xl font-bold text-white sm:text-2xl">{section.title}</h2>
+              <h2 className="text-xl font-bold text-strong sm:text-2xl">{section.title}</h2>
               {section.blocks.map((b, i) => (
                 <BlockView key={`${section.id}-${i}`} block={b} />
               ))}
@@ -272,7 +272,7 @@ export function ModuleDetail() {
                     <span className="flex items-center gap-1 text-xs text-mute">
                       <ArrowLeft size={13} aria-hidden /> Précédent
                     </span>
-                    <span className="mt-0.5 block text-sm font-medium text-white">{prevSection.title}</span>
+                    <span className="mt-0.5 block text-sm font-medium text-strong">{prevSection.title}</span>
                   </button>
                 ) : (
                   <span className="hidden sm:block" />
@@ -281,7 +281,7 @@ export function ModuleDetail() {
                   <span className="flex items-center justify-end gap-1 text-xs text-blue-300">
                     {nextSection ? 'Marquer comme lu et continuer' : 'Terminer le cours'} <ArrowRight size={13} aria-hidden />
                   </span>
-                  <span className="mt-0.5 block text-sm font-medium text-white">{nextSection ? nextSection.title : 'Templates & livrables'}</span>
+                  <span className="mt-0.5 block text-sm font-medium text-strong">{nextSection ? nextSection.title : 'Templates & livrables'}</span>
                 </button>
               </div>
             </div>
@@ -291,12 +291,12 @@ export function ModuleDetail() {
 
       {tab === 'templates' && (
         <article className="max-w-4xl">
-          <h2 className="text-xl font-bold text-white">Templates & livrables réels</h2>
+          <h2 className="text-xl font-bold text-strong">Templates & livrables réels</h2>
           <p className="mt-1 text-sm text-mute">Modèles à adapter : remplacez les champs entre crochets et faites valider par vos fonctions juridique et conformité.</p>
           {module.templates.map((b, i) => (
             <BlockView key={i} block={b} />
           ))}
-          <button type="button" onClick={() => setTab('quiz')} className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:text-white">
+          <button type="button" onClick={() => setTab('quiz')} className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:text-strong">
             Passer au quiz <ArrowRight size={14} aria-hidden />
           </button>
         </article>
@@ -306,7 +306,7 @@ export function ModuleDetail() {
       <div className="max-w-3xl" hidden={tab !== 'quiz'}>
         <Quiz key={module.id} questions={module.quiz} best={progress.quizBest[module.id]} onFinish={(score) => saveQuiz(module.id, score)} />
         {modules[index + 1] && (
-          <Link to={`/modules/${modules[index + 1].id}`} className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:text-white">
+          <Link to={`/modules/${modules[index + 1].id}`} className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:text-strong">
             Module suivant : {modules[index + 1].title} <ArrowRight size={14} aria-hidden />
           </Link>
         )}

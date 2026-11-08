@@ -36,7 +36,7 @@ export function TprmList() {
                 <Tag>{c.sector}</Tag>
                 <StatusBadge score={progress.tprm[c.id]} />
               </div>
-              <h2 className="mt-2 flex items-center gap-2 font-semibold text-white">
+              <h2 className="mt-2 flex items-center gap-2 font-semibold text-strong">
                 <Building2 size={16} className="text-accent" aria-hidden /> {c.vendor}
               </h2>
               <p className="mt-0.5 text-xs text-accent">{c.service}</p>
@@ -73,7 +73,7 @@ function TprmExercise({ c }: { c: TprmCase }) {
 
   return (
     <>
-      <Link to="/tprm" className="mb-3 inline-flex items-center gap-1 text-sm text-mute hover:text-white">
+      <Link to="/tprm" className="mb-3 inline-flex items-center gap-1 text-sm text-mute hover:text-strong">
         <ArrowLeft size={14} aria-hidden /> Tous les fournisseurs
       </Link>
       <PageHeader eyebrow={`Due diligence · ${c.sector}`} title={c.vendor}>
@@ -133,7 +133,7 @@ function TprmExercise({ c }: { c: TprmCase }) {
                   <dt className="text-xs font-semibold text-accent">{q.domain}</dt>
                   <dd>
                     <p className="text-mute">{q.q}</p>
-                    <p className="mt-0.5 text-white">« {q.a} »</p>
+                    <p className="mt-0.5 text-strong">« {q.a} »</p>
                   </dd>
                 </div>
               ))}
@@ -152,7 +152,7 @@ function TprmExercise({ c }: { c: TprmCase }) {
                   role="tab"
                   aria-selected={doc === i}
                   onClick={() => setDoc(i)}
-                  className={`-mb-px shrink-0 border-b-2 px-2.5 py-2 font-mono text-xs ${doc === i ? 'border-accent text-white' : 'border-transparent text-mute hover:text-white'}`}
+                  className={`-mb-px shrink-0 border-b-2 px-2.5 py-2 font-mono text-xs ${doc === i ? 'border-accent text-strong' : 'border-transparent text-mute hover:text-strong'}`}
                 >
                   {e.name}
                 </button>
@@ -160,7 +160,7 @@ function TprmExercise({ c }: { c: TprmCase }) {
             </div>
             <div className="p-4" role="tabpanel">
               <Tag>{c.evidence[doc].kind}</Tag>
-              <p className="mt-2 rounded-md border border-line bg-bg p-3 font-mono text-[12.5px] leading-relaxed text-slate-200">
+              <p className="mt-2 rounded-md border border-line bg-bg p-3 font-mono text-[12.5px] leading-relaxed text-ink">
                 <Rich text={c.evidence[doc].content} />
               </p>
             </div>
@@ -169,7 +169,7 @@ function TprmExercise({ c }: { c: TprmCase }) {
 
         <div className="space-y-4">
           <Card className="p-5">
-            <h2 className="font-semibold text-white">1. Criticité du tiers</h2>
+            <h2 className="font-semibold text-strong">1. Criticité du tiers</h2>
             <dl className="my-3 space-y-1.5 text-sm">
               <div>
                 <dt className="inline text-mute">Accès au SI : </dt>
@@ -188,14 +188,14 @@ function TprmExercise({ c }: { c: TprmCase }) {
             {submitted && (
               <p className="mt-3 text-sm">
                 {answer.tier === c.criticality.expected ? <CheckCircle2 size={15} className="mr-1 inline text-emerald" aria-label="Correct" /> : <XCircle size={15} className="mr-1 inline text-crimson" aria-label="Incorrect" />}
-                <span className="font-semibold text-white">{c.criticality.expected}. </span>
+                <span className="font-semibold text-strong">{c.criticality.expected}. </span>
                 {c.criticality.why}
               </p>
             )}
           </Card>
 
           <Card className="p-5">
-            <h2 className="font-semibold text-white">2. Signaux d’alerte (red flags)</h2>
+            <h2 className="font-semibold text-strong">2. Signaux d’alerte (red flags)</h2>
             <p className="mb-3 text-xs text-mute">Croisez réponses et preuves. Cochez les constats qui constituent un risque ; les points rassurants cochés à tort coûtent des points.</p>
             <ul className="space-y-2">
               {findings.map((f) => {
@@ -212,7 +212,7 @@ function TprmExercise({ c }: { c: TprmCase }) {
                         className="mt-0.5 size-4 shrink-0 accent-blue-500"
                       />
                       <span>
-                        <span className="text-white">{f.label}</span>
+                        <span className="text-strong">{f.label}</span>
                         {submitted && (
                           <span className="mt-1 block text-xs text-mute">
                             <span className={f.isRedFlag ? 'font-semibold text-red-300' : 'font-semibold text-emerald'}>{f.isRedFlag ? 'Red flag. ' : 'Point non bloquant. '}</span>
@@ -228,7 +228,7 @@ function TprmExercise({ c }: { c: TprmCase }) {
           </Card>
 
           <Card className="p-5">
-            <h2 className="mb-3 font-semibold text-white">3. Verdict</h2>
+            <h2 className="mb-3 font-semibold text-strong">3. Verdict</h2>
             <Segmented
               options={VERDICTS}
               value={answer.verdict}

@@ -11,7 +11,9 @@
   --color-card: #111827;
   --color-raised: #182133;
   --color-line: #263044;
+  --color-code: #0b111d;
   --color-ink: #e5eaf2;
+  --color-strong: #ffffff;
   --color-mute: #9aa6b8;
   --color-accent: #3b82f6;
   --color-emerald: #10b981;
@@ -23,6 +25,31 @@
 
 html {
   color-scheme: dark;
+}
+
+/* Thème clair : on redéfinit les jetons de couleur. Les nuances claires de Tailwind utilisées
+   pour du texte sur fond sombre (red-300, blue-300…) sont assombries pour rester lisibles sur blanc. */
+:root[data-theme='light'] {
+  color-scheme: light;
+  --color-bg: #f4f6fa;
+  --color-card: #ffffff;
+  --color-raised: #e9eef6;
+  --color-line: #d5dce8;
+  --color-code: #f7f9fc;
+  --color-ink: #1f2937;
+  --color-strong: #0b1220;
+  --color-mute: #556070;
+  --color-accent: #2563eb;
+  --color-emerald: #047857;
+  --color-amber: #b45309;
+  --color-crimson: #dc2626;
+  --color-red-200: #991b1b;
+  --color-red-300: #b91c1c;
+  --color-blue-200: #1e40af;
+  --color-blue-300: #1d4ed8;
+  --color-emerald-100: #065f46;
+  --color-emerald-300: #047857;
+  --color-amber-300: #b45309;
 }
 
 body {
@@ -47,6 +74,11 @@ code, pre, kbd, .font-mono {
 
 ::selection {
   background: rgb(59 130 246 / 0.35);
+}
+
+/* Bascule de thème sans clignotement des transitions. */
+.theme-switching, .theme-switching * {
+  transition: none !important;
 }
 
 * {

@@ -6,6 +6,15 @@
     <meta name="description" content="Plateforme de formation et de simulation GRC en français : gouvernance cyber, ISO 27001, risques, NIS 2, DORA, RGPD, AI Act, TPRM, PCA et contrats IT." />
     <meta name="theme-color" content="#090D16" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <script>
+      // Applique le thème avant l'affichage pour éviter un flash de la mauvaise couleur.
+      try {
+        var t = localStorage.getItem('grc-academy.theme')
+        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+        document.documentElement.dataset.theme = t
+        if (t === 'light') document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f4f6fa')
+      } catch (e) {}
+    </script>
     <title>GRC & Cyber Compliance Academy</title>
   </head>
   <body>
