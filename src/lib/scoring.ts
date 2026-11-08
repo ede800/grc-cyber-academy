@@ -1,5 +1,5 @@
 import { riskControls } from '../data/riskScenarios'
-import type { ContractCase, RiskLevel, RiskScenario, TprmCase, Treatment, Verdict } from '../types'
+import type { AuditCase, ContractCase, FindingGrade, RiskLevel, RiskScenario, TprmCase, Treatment, Verdict } from '../types'
 
 export const RISK_LEVELS: RiskLevel[] = ['Faible', 'Modéré', 'Élevé', 'Critique']
 
@@ -87,4 +87,23 @@ export function scoreRisk(s: RiskScenario, a: RiskAnswer): number {
   const key = s.keyControls.filter((k) => a.controls.includes(k)).length / s.keyControls.length
   const treatment = a.treatment && s.expectedTreatment.includes(a.treatment) ? 1 : 0
   return Math.round(rating * 30 + key * 40 + treatment * 30)
+}
+
+export const GRADES: FindingGrade[] = ['Conforme', 'Observation', 'NC mineure', 'NC majeure']
+
+export interface AuditAnswer {
+  refs: string[]
+  grade: FindingGrade | null
+  rootCause: string | null
+  capa: string | null
+}
+
+/** Référentiel violé 30 %, qualification 25 % (moitié si à un cran), cause racine 20 %, CAPA 25 %. */
+export function scoreAudit(c: AuditCase, a: AuditAnswer): number {
+  const refs = selectionScore(a.refs, c.references.map((r) => ({ id: r.id, positive: r.correct })))
+  const gap = a.grade ? Math.abs(GRADES.indexOf(a.grade) - GRADES.indexOf(c.grade)) : 99
+  const grade = gap === 0 ? 1 : gap === 1 ? 0.5 : 0
+  const root = c.rootCauses.find((r) => r.id === a.rootCause)?.correct ? 1 : 0
+  const capa = c.capas.find((x) => x.id === a.capa)?.correct ? 1 : 0
+  return Math.round(refs * 30 + grade * 25 + root * 20 + capa * 25)
 }

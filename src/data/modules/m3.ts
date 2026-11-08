@@ -16,6 +16,24 @@ export const m3: Module = {
   ],
   sections: [
     {
+      id: 'bases',
+      level: 'F',
+      title: 'L’essentiel : le risque expliqué simplement',
+      blocks: [
+        p("Traverser une rue est un risque. La **menace**, c'est la voiture. La **vulnérabilité**, c'est de traverser en regardant son téléphone. L'**impact**, c'est la blessure. La **vraisemblance** dépend du trafic et de votre attention. Le passage piéton et le feu sont des **mesures** qui réduisent la vraisemblance ; le casque d'un cycliste réduit l'impact."),
+        table(
+          ['Notion', 'Définition', 'Exemple cyber'],
+          ['Actif / valeur métier', 'Ce qui a de la valeur pour l’entreprise', 'La facturation, les données clients'],
+          ['Menace / source de risque', 'Ce qui peut causer un dommage', 'Un groupe cybercriminel'],
+          ['Vulnérabilité', 'La faiblesse exploitable', 'Pas de MFA sur la messagerie'],
+          ['Impact (gravité)', 'La conséquence pour l’entreprise', 'Facturation arrêtée 10 jours'],
+          ['Vraisemblance', 'La probabilité que le scénario se produise', 'Élevée : attaques fréquentes dans le secteur'],
+          ['Risque', 'Gravité × vraisemblance', 'Élevé : à traiter en priorité'],
+        ),
+        info('Quatre façons de traiter un risque', "**Réduire** (ajouter des mesures), **transférer** (assurance, contrat), **éviter** (renoncer à l'activité) ou **accepter** (en connaissance de cause, par écrit). Ne rien faire sans décision n'est pas une option : c'est un risque non maîtrisé."),
+      ],
+    },
+    {
       id: 'concepts',
       title: 'Concepts clés : actifs, menaces, vulnérabilités, scénarios',
       blocks: [
@@ -150,6 +168,49 @@ MESURES SUR L'ÉCOSYSTÈME
         tip('La force d’EBIOS RM : l’écosystème', "L'atelier 3 oblige à évaluer les parties prenantes (fournisseurs, partenaires, clients) selon leur **dépendance**, leur **pénétration** dans le SI, leur **maturité** et leur **confiance**. C'est le pont naturel vers la gestion des risques tiers (Module 6)."),
       ],
     },
+    {
+      id: 'fair',
+      level: 'E',
+      title: 'Expertise : quantifier le risque en euros (méthode FAIR : SLE, ARO, ALE, ROSI)',
+      blocks: [
+        p("Une matrice 5x5 classe les risques, mais elle ne dit pas **combien investir**. Face à un COMEX qui arbitre entre un projet cyber, une nouvelle usine et une acquisition, il faut parler la même langue que la finance : des **euros par an**. C'est l'objet de la quantification, dont **FAIR** (Factor Analysis of Information Risk, standard de l'Open Group) est la méthode de référence."),
+        h('Les formules de base'),
+        table(
+          ['Terme', 'Formule', 'Signification'],
+          ['SLE (Single Loss Expectancy)', 'Valeur de l’actif × facteur d’exposition, ou somme des pertes par événement', 'Combien coûte un événement'],
+          ['ARO (Annualized Rate of Occurrence)', 'Fréquence des tentatives (TEF) × probabilité de succès', 'Combien de fois par an (0,2 = une fois tous les 5 ans)'],
+          ['ALE (Annualized Loss Expectancy)', 'SLE × ARO', 'Perte annuelle attendue en euros'],
+          ['ROSI (Return on Security Investment)', '(ALE avant − ALE après − coût annuel) / coût annuel', 'Rentabilité d’une mesure de sécurité'],
+        ),
+        h('L’ontologie FAIR en bref'),
+        ul(
+          '**Loss Event Frequency** = Threat Event Frequency × Vulnerability (probabilité qu’une tentative réussisse).',
+          '**Loss Magnitude** = pertes **primaires** (arrêt d’activité, réponse à incident, remplacement) + pertes **secondaires** (amendes, actions des clients, notification, image), ces dernières n’arrivant qu’avec une certaine probabilité.',
+          'Chaque facteur est estimé en **fourchette** (minimum, plus probable, maximum) avec des experts calibrés, puis combiné par simulation de Monte-Carlo pour produire une distribution de pertes.',
+        ),
+        h('Exemple chiffré : rançongiciel sur une ETI industrielle'),
+        table(
+          ['Élément', 'Estimation'],
+          ['Pertes primaires', 'min 0,8 M€ · probable 2,5 M€ · max 6 M€ → PERT ≈ 2,8 M€'],
+          ['Pertes secondaires', 'min 0,2 M€ · probable 0,6 M€ · max 2 M€ → PERT ≈ 0,77 M€'],
+          ['SLE', '≈ 3,6 M€'],
+          ['ARO', '2 tentatives sérieuses par an × 15 % de succès = 0,3'],
+          ['ALE avant', '≈ 1,07 M€ par an'],
+          ['Mesure : EDR managé + sauvegardes immuables (180 k€/an)', 'Succès −60 % (ARO 0,12), impact −50 % (SLE ≈ 1,8 M€)'],
+          ['ALE après', '≈ 0,21 M€ par an'],
+          ['ROSI', '(1,07 − 0,21 − 0,18) / 0,18 ≈ 3,8 : chaque euro investi évite environ 3,8 € de pertes nettes'],
+        ),
+        tip('PERT', "La moyenne PERT pondère quatre fois la valeur la plus probable : (min + 4 × probable + max) / 6. Elle est plus robuste qu'une moyenne simple quand le maximum est extrême."),
+        warn('Les limites à assumer', "Les chiffres sont des **estimations**, pas des certitudes : présentez des fourchettes, documentez les hypothèses (sources : historique d'incidents, données assureurs, benchmarks sectoriels) et faites-les valider par la finance et les métiers. L'intérêt majeur de FAIR est la discussion qu'il impose sur les hypothèses."),
+        h('Utiliser FAIR au COMEX'),
+        ul(
+          'Exprimer l’**appétence** en euros : « nous n’acceptons pas d’ALE résiduelle supérieure à 1 M€ sur un scénario ».',
+          'Comparer les investissements cyber entre eux et avec d’autres projets de l’entreprise.',
+          'Dimensionner la **cyber-assurance** : la franchise et le plafond se comparent aux pertes probables et extrêmes.',
+        ),
+        links({ to: '/risques?tab=fair', label: 'Ouvrir le calculateur FAIR / ROSI' }),
+      ],
+    },
   ],
   templates: [
     doc('Modèle - Fiche de risque du registre', `RISQUE R-07 · Rançongiciel sur l'infrastructure de paie
@@ -244,6 +305,19 @@ Nom / fonction / date / signature`),
       options: ['Éviter (supprimer la source du risque de fuite de PAN)', 'Accepter', 'Réduire', 'Transférer uniquement'],
       answer: 0,
       explain: "Ne plus détenir les données supprime le risque de leur fuite dans le SI : c'est un évitement. Il subsiste un risque tiers sur le PSP, à évaluer séparément (Module 6).",
+    },
+    {
+      q: 'Un scénario a un SLE de 400 000 € et se produit en moyenne une fois tous les 4 ans. Quelle est l’ALE ?',
+      options: ['1 600 000 €', '100 000 €', '400 000 €', '25 000 €'],
+      answer: 1,
+      explain: 'ARO = 1/4 = 0,25 ; ALE = 400 000 × 0,25 = 100 000 € par an.',
+    },
+    {
+      q: 'Une mesure coûte 50 k€ par an et fait passer l’ALE de 300 k€ à 100 k€. Quel est son ROSI ?',
+      case: 'Le DAF demande si l’investissement « rapporte ».',
+      options: ['4', '3', '2', '0,25'],
+      answer: 1,
+      explain: 'ROSI = (300 − 100 − 50) / 50 = 3 : chaque euro investi évite 3 € de pertes nettes.',
     },
   ],
 }

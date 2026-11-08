@@ -1,12 +1,16 @@
 import { describe, expect, it } from 'vitest'
+import { auditCases } from '../data/auditCases'
 import { contractCases } from '../data/contractsRedline'
+import { deliverables } from '../data/deliverables'
 import { frameworkMapping } from '../data/frameworkMapping'
+import { interviewQuestions } from '../data/interviewPrep'
 import { isoControls } from '../data/isoControls'
 import { modules } from '../data/modules'
 import { riskControls, riskScenarios } from '../data/riskScenarios'
 import { tprmCases } from '../data/tprmCases'
-import { sanitizeProgress } from './progress'
-import { levelOf, residual, scoreContract, scoreRisk, scoreTprm } from './scoring'
+import { fairAfter, fairBefore, pert, rosi } from './fair'
+import { computeXp, MAX_XP, RANKS, sanitizeProgress } from './progress'
+import { levelOf, residual, scoreAudit, scoreContract, scoreRisk, scoreTprm } from './scoring'
 import { search } from './search'
 
 describe('Annexe A ISO 27001:2022', () => {
@@ -17,12 +21,24 @@ describe('Annexe A ISO 27001:2022', () => {
     expect(isoControls.filter((c) => c.isNew).map((c) => c.id)).toEqual(['A.5.7', 'A.5.23', 'A.5.30', 'A.7.4', 'A.8.9', 'A.8.10', 'A.8.11', 'A.8.12', 'A.8.16', 'A.8.23', 'A.8.28'])
     expect(new Set(isoControls.map((c) => c.id)).size).toBe(93)
   })
+
+  it('chaque mesure a son guide de terrain : questions, preuves et faux-semblants', () => {
+    for (const c of isoControls) {
+      expect(c.auditQuestions.length, c.id).toBeGreaterThanOrEqual(2)
+      expect(c.expectedEvidence.length, c.id).toBeGreaterThanOrEqual(2)
+      expect(c.commonPitfalls.length, c.id).toBeGreaterThanOrEqual(1)
+    }
+  })
 })
 
 describe('Intégrité du contenu', () => {
-  it('8 modules complets avec quiz valides', () => {
-    expect(modules).toHaveLength(8)
+  it('10 modules complets avec quiz valides et les 3 paliers', () => {
+    expect(modules).toHaveLength(10)
+    expect(new Set(modules.map((m) => m.id)).size).toBe(10)
     for (const m of modules) {
+      const levels = new Set(m.sections.map((s) => s.level ?? 'O'))
+      expect([...levels].sort(), m.id).toEqual(['E', 'F', 'O'])
+      expect(m.sections[0].level, m.id).toBe('F')
       expect(m.sections.length).toBeGreaterThan(2)
       expect(m.templates.length).toBeGreaterThan(0)
       expect(new Set(m.sections.map((s) => s.id)).size).toBe(m.sections.length)
@@ -38,6 +54,27 @@ describe('Intégrité du contenu', () => {
       for (const s of c.excerpt) if (s.trap) expect(traps).toContain(s.trap)
       expect(c.counters.filter((x) => x.correct)).toHaveLength(1)
     }
+    expect(contractCases).toHaveLength(11)
+    expect(new Set(contractCases.map((c) => c.id)).size).toBe(11)
+  })
+
+  it('8 situations d’audit cohérentes, qualifications variées', () => {
+    expect(auditCases).toHaveLength(8)
+    for (const c of auditCases) {
+      expect(c.references.some((r) => r.correct), c.id).toBe(true)
+      expect(c.rootCauses.filter((r) => r.correct), c.id).toHaveLength(1)
+      expect(c.capas.filter((x) => x.correct), c.id).toHaveLength(1)
+      expect(c.whys, c.id).toHaveLength(5)
+    }
+    expect(new Set(auditCases.map((c) => c.grade))).toEqual(new Set(['Conforme', 'Observation', 'NC mineure', 'NC majeure']))
+  })
+
+  it('25 questions d’entretien et 5 livrables, dont une DdA des 93 mesures', () => {
+    expect(interviewQuestions).toHaveLength(25)
+    expect(new Set(interviewQuestions.map((q) => q.id)).size).toBe(25)
+    expect(deliverables).toHaveLength(5)
+    const dda = deliverables.find((d) => d.id === 'dda')!.markdown
+    for (const c of isoControls) expect(dda).toContain(`| ${c.id} |`)
   })
 
   it('chaque cas TPRM et scénario de risque est cohérent', () => {
@@ -70,8 +107,21 @@ describe('Notation', () => {
     expect(scoreRisk(s, { gravity: s.expected.gravity, likelihood: s.expected.likelihood, controls: s.keyControls, treatment: s.expectedTreatment[0] })).toBe(100)
   })
 
+  it('une revue d’audit parfaite vaut 100, une sur-qualification coûte des points', () => {
+    const c = auditCases[0]
+    const perfect = { refs: c.references.filter((r) => r.correct).map((r) => r.id), grade: c.grade, rootCause: c.rootCauses.find((r) => r.correct)!.id, capa: c.capas.find((x) => x.correct)!.id }
+    expect(scoreAudit(c, perfect)).toBe(100)
+    expect(scoreAudit(c, { ...perfect, grade: 'NC majeure' })).toBe(88)
+  })
+
+  it('XP et rangs : l’XP maximale permet d’atteindre RSSI / CISO', () => {
+    expect(MAX_XP).toBeGreaterThan(RANKS[3].min)
+    expect(computeXp(sanitizeProgress({}))).toBe(0)
+  })
+
   it('une sauvegarde corrompue ne casse pas le démarrage', () => {
     expect(sanitizeProgress('nimporte quoi').quizBest).toEqual({})
+    expect(sanitizeProgress({ audits: { a: 70, b: 'x' }, interviews: { q: 'maitrise', r: 'faux' } })).toMatchObject({ audits: { a: 70 }, interviews: { q: 'maitrise' } })
     expect(sanitizeProgress({ quizBest: { a: 500, b: 80 }, risks: { x: { gravity: 9 } } })).toMatchObject({ quizBest: { b: 80 }, risks: { x: { gravity: 3 } } })
   })
 })
@@ -81,5 +131,17 @@ describe('Recherche Ctrl+K', () => {
     expect(search('vulnerabilites')[0].kind).toBe('Crosswalk')
     expect(search('A.5.23')[0].label).toBe('A.5.23')
     expect(search('sauvegardes').some((h) => h.key === 'map-continuite')).toBe(true)
+  })
+})
+
+describe('Quantification FAIR', () => {
+  it('PERT, ALE et ROSI', () => {
+    expect(pert(0, 6, 12)).toBe(6)
+    const input = { primary: [100, 100, 100] as [number, number, number], secondary: [0, 0, 0] as [number, number, number], tef: 4, vulnerability: 0.5 }
+    expect(fairBefore(input)).toEqual({ sle: 100, aro: 2, ale: 200 })
+    const after = fairAfter(input, { annualCost: 50, vulnReduction: 0.5, impactReduction: 0 })
+    expect(after.ale).toBe(100)
+    expect(rosi(200, after.ale, 50)).toBe(1)
+    expect(rosi(200, 100, 0)).toBeNull()
   })
 })

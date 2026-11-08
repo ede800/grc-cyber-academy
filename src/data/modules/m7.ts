@@ -1,5 +1,5 @@
 import type { Module } from '../../types'
-import { danger, doc, h, info, ol, p, table, tip, ul, warn } from '../blocks'
+import { danger, doc, h, info, links, ol, p, table, tip, ul, warn } from '../blocks'
 
 export const m7: Module = {
   id: 'continuite-audit',
@@ -16,6 +16,24 @@ export const m7: Module = {
     'Mener un entretien d’audit, échantillonner et rédiger un constat factuel',
   ],
   sections: [
+    {
+      id: 'bases',
+      level: 'F',
+      title: 'L’essentiel : continuité et audit en mots simples',
+      blocks: [
+        p("La **continuité d'activité**, c'est la roue de secours, le cric et le numéro de la dépanneuse : on les prépare avant la crevaison pour pouvoir repartir vite. L'**audit**, c'est le contrôle technique : un regard indépendant qui vérifie, preuves à l'appui, que ce qui est prévu fonctionne."),
+        table(
+          ['Terme', 'Signification', 'Exemple'],
+          ['PCA', 'Plan de continuité d’activité : continuer à servir les clients pendant la crise', 'Basculer la prise de commandes sur un mode dégradé'],
+          ['PRA', 'Plan de reprise d’activité : redémarrer le SI après un sinistre', 'Restaurer l’ERP sur le site de secours'],
+          ['BIA', 'Analyse d’impact sur l’activité : ce que coûte un arrêt dans le temps', '1 jour d’arrêt = 300 k€ de perte'],
+          ['RTO / RPO', 'Durée maximale d’interruption / perte de données maximale admissible', 'RTO 8 h, RPO 1 h'],
+          ['Audit', 'Examen méthodique et indépendant pour obtenir des preuves et les évaluer', 'Audit interne ISO 27001'],
+          ['Constat', 'Écart entre un critère (exigence) et un fait observé', '3 comptes de partants encore actifs'],
+        ),
+        tip('À retenir', "Un plan jamais testé est une hypothèse. Une politique jamais vérifiée est une intention. Le test et l'audit transforment les intentions en preuves."),
+      ],
+    },
     {
       id: 'pca-pra',
       title: 'PCA, PRA, PCI et gestion de crise',
@@ -149,6 +167,37 @@ RÉPONSE DE L'AUDITÉ : [à compléter] · Échéance : [ ] · Responsable : [ ]
         danger('Les constats qui se font démonter', "« Les accès ne sont pas bien gérés » (pas de fait), « 3 comptes problématiques » (sans preuve ni population), « Le RSSI est incompétent » (jugement de personne). Un constat décrit un **fait vérifiable** et son **écart à un critère**, jamais une opinion."),
       ],
     },
+    {
+      id: 'expert-lead-auditor',
+      level: 'E',
+      title: 'Expertise : posture de Lead Auditor et pièges d’audit',
+      blocks: [
+        h('1. Le scepticisme professionnel'),
+        p("Un tableau de bord parfait ne prouve rien. Le Lead Auditor teste la **réalité** que l'indicateur prétend décrire, en partant de sources indépendantes de l'audité et en tirant ses échantillons lui-même."),
+        table(
+          ['Ce qu’on vous montre', 'Ce que vous testez', 'Sens du test'],
+          ['« 100 % des comptes revus »', 'Export RH des départs → comptes actifs', 'De la source vers l’indicateur'],
+          ['« Sauvegardes 100 % OK »', 'PV de restauration de l’application la plus critique, durée mesurée', 'De l’exigence (RTO) vers la preuve'],
+          ['« Tous les changements passent au CAB »', 'Journaux de production → tickets approuvés', 'De la réalité technique vers le processus'],
+          ['« EDR déployé partout »', 'Inventaire des serveurs → console EDR', 'De l’exhaustivité vers la couverture'],
+        ),
+        h('2. Les faux-semblants les plus fréquents'),
+        ul(
+          'Politique écrite mais jamais appliquée (aucune preuve d’application sur l’échantillon).',
+          'Sauvegarde jamais testée en restauration, ou stockée dans le même domaine que la production.',
+          'Revue des droits « tamponnée » à 100 % sans aucun retrait.',
+          'PRA « testé » par relecture documentaire, sans bascule réelle.',
+          'Indicateurs calculés sur un périmètre réduit (postes enrôlés au MDM plutôt que parc réel).',
+          'Preuve créée la veille de l’audit (date de création du fichier, métadonnées).',
+        ),
+        h('3. Qualifier et défendre un constat'),
+        p("Un constat solide tient en quatre éléments : **critère** précis (clause, article), **fait** vérifié et daté, **échantillon** (taille, méthode, résultat), **risque** pour l'organisme. Plusieurs NC mineures sur la même exigence peuvent constituer une NC majeure si elles révèlent une défaillance systémique."),
+        h('4. Continuité : tester avec la direction'),
+        p("Le test technique (bascule, restauration) ne suffit pas. Un exercice de crise sur table avec le COMEX, sur un scénario de rançongiciel, révèle ce que les plans ignorent : qui décide de payer ou non, qui parle à la presse, comment joindre les clients quand la messagerie est chiffrée. C'est aussi une exigence implicite de NIS 2 (Art. 20) et explicite de DORA (Art. 11)."),
+        warn('Conflit d’intérêts', "Un auditeur interne ne doit pas auditer un processus qu'il a conçu ou qu'il exploite. Un RSSI qui audite son propre SMSI produit un audit sans valeur au sens de la clause 9.2 et d'ISO 19011."),
+        links({ to: '/audit', label: 'Qualifier des constats dans le Simulateur d’audit ISO 19011' }),
+      ],
+    },
   ],
   templates: [
     doc('Modèle - Fiche BIA par processus', `BIA · Processus : Prise de commandes e-commerce · Propriétaire : Directeur E-commerce
@@ -251,6 +300,18 @@ T4 Offboarding : 5 contrats terminés - accès révoqués, données restituées 
       options: ['Zéro erreur lors des tests de restauration vérifiés', 'Zéro donnée dans le cloud', 'Zéro jour de rétention', 'Zéro accès administrateur'],
       answer: 0,
       explain: "Une sauvegarde ne vaut que si sa restauration a été testée sans erreur. C'est l'exigence la plus souvent absente lors des audits.",
+    },
+    {
+      q: 'Pour vérifier qu’aucun compte de partant n’est actif, quel test est le plus probant ?',
+      options: ['Lire le rapport de revue des droits', 'Partir de l’export RH des départs et vérifier l’état des comptes dans l’annuaire', 'Demander au responsable IAM', 'Vérifier la procédure de départ'],
+      answer: 1,
+      explain: 'Partir d’une source indépendante (RH) vers l’objet testé (comptes) détecte ce que l’indicateur masque.',
+    },
+    {
+      q: 'Trois NC mineures portent sur la même exigence de gestion des accès, sur trois applications différentes. Que peut conclure l’auditeur ?',
+      options: ['Trois NC mineures distinctes, sans autre conséquence', 'Elles peuvent constituer une NC majeure si elles révèlent une défaillance systémique du processus', 'Une observation', 'Rien, elles s’annulent'],
+      answer: 1,
+      explain: 'La répétition révèle un problème de processus, pas un écart ponctuel.',
     },
   ],
 }

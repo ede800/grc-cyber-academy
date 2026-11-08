@@ -11,9 +11,12 @@ const KIND_CLS: Record<HitKind, string> = {
   Contrat: 'text-amber',
   Tiers: 'text-sky-300',
   Risque: 'text-red-300',
+  Audit: 'text-orange-300',
+  Entretien: 'text-pink-300',
+  Livrable: 'text-teal-300',
 }
 
-const SUGGESTIONS = ['vulnérabilités', 'sauvegardes', 'A.5.23', 'MFA', 'notification', 'Art. 30', 'SOC 2', 'sous-traitant']
+const SUGGESTIONS = ['vulnérabilités', 'sauvegardes', 'A.5.23', 'MFA', 'Cloud Act', 'FAIR', 'SOC 2', 'dérogation', 'revue de direction', 'entretien']
 
 export function CommandPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [query, setQuery] = useState('')

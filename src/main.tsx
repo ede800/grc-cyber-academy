@@ -4,6 +4,8 @@ import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { Layout } from './components/Layout'
 import './index.css'
 import { ProgressProvider } from './lib/progress'
+import { AuditCaseView, AuditList } from './views/AuditSimulator'
+import { CareerAndTemplates } from './views/CareerAndTemplates'
 import { ContractCaseView, ContractList } from './views/ContractRedliner'
 import { Dashboard } from './views/Dashboard'
 import { FrameworkMapper } from './views/FrameworkMapper'
@@ -28,6 +30,9 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/risques" element={<RiskList />} />
             <Route path="/risques/:id" element={<RiskDetail />} />
             <Route path="/referentiels" element={<FrameworkMapper />} />
+            <Route path="/audit" element={<AuditList />} />
+            <Route path="/audit/:id" element={<AuditCaseView />} />
+            <Route path="/livrables" element={<CareerAndTemplates />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Layout>

@@ -5,7 +5,7 @@ import { Quiz } from '../components/Quiz'
 import { BlockView, Card, inputCls, PageHeader, ProgressBar, Rich, ScoreBadge, Tag } from '../components/ui'
 import { modules } from '../data/modules'
 import { useProgress } from '../lib/progress'
-import type { Block } from '../types'
+import type { Block, Level } from '../types'
 
 /** Temps de lecture estimé à 150 mots par minute : texte réglementaire dense, tableaux et livrables compris. */
 function readingMinutes(blocks: Block[]): number {
@@ -33,13 +33,35 @@ function readingMinutes(blocks: Block[]): number {
 
 const PILLAR: Record<string, string> = { G: 'Gouvernance', R: 'Risques', C: 'Conformité' }
 
+/** Paliers de progression : du junior au CISO. */
+export const LEVELS: Record<Level, { label: string; short: string; dot: string; text: string }> = {
+  F: { label: 'Fondamentaux', short: 'Junior', dot: 'bg-emerald', text: 'text-emerald' },
+  O: { label: 'Opérationnel', short: 'Confirmé', dot: 'bg-amber', text: 'text-amber' },
+  E: { label: 'Expertise & Stratégie', short: 'Senior / CISO', dot: 'bg-crimson', text: 'text-red-300' },
+}
+const LEVEL_ORDER: Level[] = ['F', 'O', 'E']
+
+export function LevelPill({ level }: { level: Level }) {
+  const l = LEVELS[level]
+  return (
+    <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold ${l.text}`}>
+      <span className={`size-2 rounded-full ${l.dot}`} aria-hidden /> {l.label} <span className="font-normal text-mute">· {l.short}</span>
+    </span>
+  )
+}
+
 export function ModulesList() {
   const { progress } = useProgress()
   return (
     <>
-      <PageHeader eyebrow="Cursus A à Z" title="8 piliers opérationnels du GRC">
-        Chaque module associe un cours approfondi (articles, clauses, méthodes, erreurs classiques), des templates et livrables réels prêts à copier, et un quiz composé de cas pratiques d’audit corrigés.
+      <PageHeader eyebrow="Cursus A à Z" title="10 piliers, du junior au CISO">
+        Chaque module associe un cours approfondi (articles, clauses, méthodes, erreurs classiques), des templates et livrables réels prêts à copier, et un quiz composé de cas pratiques d’audit corrigés. Les leçons progressent en trois paliers :
       </PageHeader>
+      <div className="-mt-3 mb-6 flex flex-wrap gap-x-5 gap-y-2">
+        {LEVEL_ORDER.map((l) => (
+          <LevelPill key={l} level={l} />
+        ))}
+      </div>
       <ol className="grid grid-cols-1 gap-3 md:grid-cols-2">
         {modules.map((m) => {
           const read = progress.coursesRead[m.id]?.length ?? 0
@@ -186,14 +208,19 @@ export function ModuleDetail() {
                 {module.sections.map((s, i) => (
                   <option key={s.id} value={s.id}>
                     {read.includes(s.id) ? '✓ ' : ''}
-                    {i + 1}. {s.title}
+                    {i + 1}. {s.title} · {LEVELS[s.level ?? 'O'].label}
                   </option>
                 ))}
               </select>
             </label>
             <ul className="hidden space-y-1 lg:block">
-              {module.sections.map((s) => (
+              {module.sections.map((s, i) => (
                 <li key={s.id} className="shrink-0">
+                  {(s.level ?? 'O') !== (module.sections[i - 1]?.level ?? (i === 0 ? null : 'O')) && (
+                    <p className={`${i === 0 ? '' : 'mt-3 '}mb-1 flex items-center gap-1.5 px-2.5 text-[10px] font-semibold tracking-widest uppercase ${LEVELS[s.level ?? 'O'].text}`}>
+                      <span className={`size-1.5 rounded-full ${LEVELS[s.level ?? 'O'].dot}`} aria-hidden /> {LEVELS[s.level ?? 'O'].label}
+                    </p>
+                  )}
                   <button
                     type="button"
                     onClick={() => setSectionId(s.id)}
@@ -222,8 +249,11 @@ export function ModuleDetail() {
               </Card>
             )}
             <div key={section.id} className="fade-in">
-              <p className="mb-1 font-mono text-xs text-mute">
-                Section {sectionIndex + 1} / {module.sections.length} · ≈ {readingMinutes(section.blocks)} min
+              <p className="mb-1 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-mute">
+                <span>
+                  Section {sectionIndex + 1} / {module.sections.length} · ≈ {readingMinutes(section.blocks)} min
+                </span>
+                <LevelPill level={section.level ?? 'O'} />
               </p>
               <h2 className="text-xl font-bold text-white sm:text-2xl">{section.title}</h2>
               {section.blocks.map((b, i) => (

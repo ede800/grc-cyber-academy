@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   base: './',
   plugins: [react(), tailwindcss()],
-  // Le contenu pédagogique est volontairement embarqué dans le bundle (environ 180 Ko gzippés).
-  build: { chunkSizeWarningLimit: 800 },
+  // Le contenu pédagogique (10 modules, 93 fiches d’audit, cas pratiques) est volontairement embarqué :
+  // la recherche Ctrl+K et le calcul de l’XP en ont besoin dès le chargement (environ 280 Ko gzippés).
+  build: { chunkSizeWarningLimit: 1200 },
 })

@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { auditCases } from '../data/auditCases'
 import { contractCases } from '../data/contractsRedline'
 import { modules } from '../data/modules'
 import { riskScenarios } from '../data/riskScenarios'
@@ -38,24 +39,32 @@ export interface Progress {
   risks: Record<string, RiskEntry>
   customRisks: CustomRisk[]
   soa: Record<string, SoaEntry>
+  /** Meilleur score par cas du simulateur d'audit ISO 19011. */
+  audits: Record<string, number>
+  /** Auto-évaluation des questions d'entretien. */
+  interviews: Record<string, InterviewMark>
 }
 
-const EMPTY: Progress = { coursesRead: {}, quizBest: {}, contracts: {}, tprm: {}, risks: {}, customRisks: [], soa: {} }
+export type InterviewMark = 'maitrise' | 'a-revoir'
 
-export const XP_RULES = { course: 50, quiz: 100, contract: 120, tprm: 150, risk: 100 }
+const EMPTY: Progress = { coursesRead: {}, quizBest: {}, contracts: {}, tprm: {}, risks: {}, customRisks: [], soa: {}, audits: {}, interviews: {} }
 
+export const XP_RULES = { course: 50, quiz: 100, contract: 120, tprm: 150, risk: 100, audit: 130 }
+
+/** Seuils fixés à environ 27 %, 55 % et 83 % de l'XP totale. */
 export const RANKS = [
   { name: 'Analyste GRC Junior', min: 0 },
-  { name: 'Consultant GRC Senior', min: 900 },
-  { name: 'Risk & Compliance Manager', min: 1900 },
-  { name: 'RSSI / CISO', min: 2900 },
+  { name: 'Consultant GRC Senior', min: 1400 },
+  { name: 'Risk & Compliance Manager', min: 2900 },
+  { name: 'RSSI / CISO', min: 4300 },
 ]
 
 export const MAX_XP =
   modules.length * (XP_RULES.course + XP_RULES.quiz) +
   contractCases.length * XP_RULES.contract +
   tprmCases.length * XP_RULES.tprm +
-  riskScenarios.length * XP_RULES.risk
+  riskScenarios.length * XP_RULES.risk +
+  auditCases.length * XP_RULES.audit
 
 /** L'XP est dérivée de l'état : refaire un exercice n'augmente que le meilleur score. */
 export function computeXp(p: Progress): number {
@@ -67,6 +76,7 @@ export function computeXp(p: Progress): number {
   for (const s of Object.values(p.contracts)) xp += Math.round((s / 100) * XP_RULES.contract)
   for (const s of Object.values(p.tprm)) xp += Math.round((s / 100) * XP_RULES.tprm)
   for (const e of Object.values(p.risks)) if (e.score !== undefined) xp += Math.round((e.score / 100) * XP_RULES.risk)
+  for (const s of Object.values(p.audits)) xp += Math.round((s / 100) * XP_RULES.audit)
   return xp
 }
 
@@ -114,7 +124,10 @@ export function sanitizeProgress(raw: unknown): Progress {
           .map(([k, e]) => [k, { applicable: e.applicable !== false, status: STATUSES.find((s) => s === e.status) ?? 'Mise en œuvre', justification: str(e.justification) }]),
       )
     : {}
-  return { coursesRead, quizBest: scoreMap(o.quizBest), contracts: scoreMap(o.contracts), tprm: scoreMap(o.tprm), risks, customRisks, soa }
+  const interviews = isRecord(o.interviews)
+    ? Object.fromEntries(Object.entries(o.interviews).filter((e): e is [string, InterviewMark] => e[1] === 'maitrise' || e[1] === 'a-revoir'))
+    : {}
+  return { coursesRead, quizBest: scoreMap(o.quizBest), contracts: scoreMap(o.contracts), tprm: scoreMap(o.tprm), risks, customRisks, soa, audits: scoreMap(o.audits), interviews }
 }
 
 function load(): Progress {
@@ -135,6 +148,8 @@ interface Ctx {
   saveRisk: (id: string, entry: RiskEntry) => void
   saveCustomRisks: (list: CustomRisk[]) => void
   saveSoa: (controlId: string, entry: SoaEntry | null) => void
+  saveAudit: (id: string, score: number) => void
+  markInterview: (id: string, mark: InterviewMark | null) => void
   reset: () => void
 }
 
@@ -191,11 +206,22 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       }),
     [],
   )
+  const saveAudit = useCallback((id: string, score: number) => setProgress((p) => ({ ...p, audits: best(p.audits, id, score) })), [])
+  const markInterview = useCallback(
+    (id: string, mark: InterviewMark | null) =>
+      setProgress((p) => {
+        const interviews = { ...p.interviews }
+        if (mark) interviews[id] = mark
+        else delete interviews[id]
+        return { ...p, interviews }
+      }),
+    [],
+  )
   const reset = useCallback(() => setProgress(EMPTY), [])
 
   const value = useMemo(
-    () => ({ progress, toggleSection, saveQuiz, saveContract, saveTprm, saveRisk, saveCustomRisks, saveSoa, reset }),
-    [progress, toggleSection, saveQuiz, saveContract, saveTprm, saveRisk, saveCustomRisks, saveSoa, reset],
+    () => ({ progress, toggleSection, saveQuiz, saveContract, saveTprm, saveRisk, saveCustomRisks, saveSoa, saveAudit, markInterview, reset }),
+    [progress, toggleSection, saveQuiz, saveContract, saveTprm, saveRisk, saveCustomRisks, saveSoa, saveAudit, markInterview, reset],
   )
   return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>
 }

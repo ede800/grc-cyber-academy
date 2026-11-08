@@ -17,6 +17,25 @@ export const m2: Module = {
   ],
   sections: [
     {
+      id: 'bases',
+      level: 'F',
+      title: 'L’essentiel : un SMSI, c’est quoi ?',
+      blocks: [
+        p("Un **SMSI** (Système de Management de la Sécurité de l'Information) est la manière organisée dont une entreprise décide, applique, vérifie et améliore sa sécurité. Ce n'est pas un logiciel ni un pare-feu : c'est un ensemble de rôles, de règles, de décisions et de preuves. ISO 27001 décrit ce que ce système doit contenir pour être certifié."),
+        info('Analogie', "Le SMSI ressemble au carnet d'entretien d'un avion : ce n'est pas lui qui fait voler l'appareil, mais il garantit que chaque contrôle est planifié, réalisé, tracé et que chaque anomalie est corrigée. Un auditeur de certification vérifie le carnet **et** l'avion."),
+        table(
+          ['Terme', 'Signification'],
+          ['Périmètre', 'Ce qui est couvert par le SMSI : activités, sites, systèmes. Il figure sur le certificat'],
+          ['Clauses 4 à 10', 'Les exigences du système de management : obligatoires, aucune exclusion possible'],
+          ['Annexe A', 'La liste de 93 mesures de sécurité de référence, à retenir ou exclure selon les risques'],
+          ['DdA (SoA)', 'La Déclaration d’Applicabilité : pour chaque mesure, applicable ou non, pourquoi, et son état'],
+          ['Non-conformité', 'Un écart à une exigence, constaté avec une preuve lors d’un audit'],
+          ['Cycle de certification', '3 ans : audit initial (étapes 1 et 2), deux audits de surveillance annuels, puis renouvellement'],
+        ),
+        tip('À retenir', "On ne certifie pas un niveau de sécurité « parfait », on certifie qu'un **système de pilotage fonctionne** : les risques sont connus, les décisions prises et tracées, les mesures appliquées et améliorées."),
+      ],
+    },
+    {
       id: 'pdca',
       title: 'SMSI, PDCA et cycle de certification',
       blocks: [
@@ -170,6 +189,36 @@ Déclaration d'Applicabilité version 4.1 du JJ/MM/AAAA. »`),
         tip('Maintenir la DdA', 'Versionnez la DdA, liez chaque mesure aux risques qu’elle traite et aux preuves. Toute modification du périmètre, nouveau risque ou changement de mesure entraîne une nouvelle version approuvée.'),
       ],
     },
+    {
+      id: 'expert-audit',
+      level: 'E',
+      title: 'Expertise : réussir un audit de certification et éviter les SMSI de façade',
+      blocks: [
+        h('1. Choisir le bon périmètre'),
+        p("Un périmètre trop large retarde la certification de deux ans ; un périmètre trop étroit (« le service informatique du siège ») produit un certificat que vos clients refuseront. Le senior définit le périmètre à partir de **ce que les clients et régulateurs attendent** : le service vendu, ses équipes, ses sites et ses fournisseurs critiques."),
+        h('2. Les faux-semblants que l’auditeur détecte'),
+        table(
+          ['Faux-semblant', 'Comment l’auditeur le détecte', 'Conséquence'],
+          ['DdA copiée d’un modèle', 'Exclusions incohérentes avec l’activité (codage sécurisé exclu chez un éditeur)', 'NC sur 6.1.3'],
+          ['Audit interne réalisé par le RSSI sur son propre périmètre', 'Question sur l’indépendance des auditeurs', 'NC sur 9.2'],
+          ['Revue de direction absente ou purement formelle', 'Demande des éléments d’entrée 9.3.2 et des décisions', 'NC majeure possible'],
+          ['Objectifs non mesurés', 'Demande des valeurs actuelles et de leur suivi', 'NC sur 6.2 / 9.1'],
+          ['Politiques écrites mais non appliquées', 'Échantillonnage sur le terrain (accès, sauvegardes, changements)', 'NC sur les mesures concernées'],
+        ),
+        h('3. Gérer l’audit comme un projet'),
+        ul(
+          'Audit à blanc par un auditeur indépendant 2 à 3 mois avant l’étape 2.',
+          'Un « guide » par entretien : la personne qui connaît réellement le sujet, pas le manager qui le découvre.',
+          'Preuves prêtes et indexées par exigence ; ne jamais produire une preuve créée la veille (dates de création visibles).',
+          'Une NC n’est pas un drame : une réponse rapide, avec analyse de cause racine et action corrective vérifiable, rassure plus qu’un audit sans écart.',
+        ),
+        info('Contester une non-conformité', "Si un constat vous semble infondé, contestez-le **en réunion de clôture**, preuves à l'appui et en citant l'exigence exacte. Ensuite, la procédure de réclamation de l'organisme de certification s'applique. Une contestation argumentée est légitime ; une négociation commerciale du constat ne l'est pas."),
+        h('4. Intégrer plutôt qu’empiler'),
+        p("ISO 27701 (vie privée), ISO 22301 (continuité) et ISO 42001 (IA) partagent la structure des clauses 4 à 10. Un **système de management intégré** mutualise revue de direction, audit interne, gestion documentaire et actions correctives : un audit combiné coûte moins cher et produit une gouvernance plus cohérente."),
+        warn('Transition 2013 → 2022', "La période de transition vers ISO 27001:2022 s'est achevée le 31 octobre 2025 : les certificats 2013 ont expiré. Si un fournisseur vous présente encore un certificat 2013, il n'est plus valide."),
+        links({ to: '/audit', label: 'S’entraîner sur des constats dans le Simulateur d’audit' }),
+      ],
+    },
   ],
   templates: [
     doc('Modèle - Plan de traitement des risques (extrait)', `PLAN DE TRAITEMENT DES RISQUES · SMSI PayFlow · v2.3
@@ -269,6 +318,18 @@ DÉCISIONS : améliorations, besoins de changement du SMSI, ressources allouées
       options: ['Les changements des besoins et attentes des parties intéressées pertinentes', 'Le budget de l’année suivante', 'Le nombre de serveurs', 'Le taux de rotation du personnel'],
       answer: 0,
       explain: "La 9.3.2 c) ajoute explicitement les changements des besoins et attentes des parties intéressées pertinentes pour le SMSI.",
+    },
+    {
+      q: 'Un éditeur SaaS exclut A.8.28 (codage sécurisé) de sa DdA en indiquant « non pertinent ». Comment l’auditeur réagit-il ?',
+      options: ['Il accepte, la DdA est libre', 'Il relève une non-conformité : l’exclusion contredit l’activité réelle et n’est pas justifiée par l’analyse de risques', 'Il émet une simple observation sur la forme', 'Il demande d’ajouter une mesure supplémentaire'],
+      answer: 1,
+      explain: 'Une exclusion doit être justifiée par l’absence d’activité ou de risque : c’est faux pour un éditeur qui développe.',
+    },
+    {
+      q: 'Que vaut un certificat ISO 27001:2013 présenté par un fournisseur aujourd’hui ?',
+      options: ['Il reste valable jusqu’à sa date de fin', 'Il n’est plus valide : la transition vers la version 2022 s’est achevée le 31 octobre 2025', 'Il vaut un certificat 2022', 'Il est valable dans l’UE uniquement'],
+      answer: 1,
+      explain: 'Les certificats non transitionnés ont expiré à la fin de la période de transition.',
     },
   ],
 }

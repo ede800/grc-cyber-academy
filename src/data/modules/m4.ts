@@ -16,6 +16,26 @@ export const m4: Module = {
   ],
   sections: [
     {
+      id: 'bases',
+      level: 'F',
+      title: 'L’essentiel : cadre volontaire, directive et règlement',
+      blocks: [
+        p("Trois textes reviennent sans cesse, mais ils n'ont pas la même force juridique. Comprendre leur nature évite les contresens les plus fréquents en entretien comme en mission."),
+        table(
+          ['Texte', 'Nature', 'Qui est concerné', 'Analogie'],
+          ['NIST CSF 2.0', 'Cadre **volontaire** américain, utilisé dans le monde entier', 'Toute organisation qui veut structurer et mesurer sa maturité', 'Un guide de bonnes pratiques de conduite'],
+          ['NIS 2', '**Directive** européenne : chaque État la transpose dans sa loi nationale', 'Entités essentielles et importantes de 18 secteurs', 'Le code de la route, adapté par chaque pays'],
+          ['DORA', '**Règlement** européen : directement applicable depuis le 17 janvier 2025', 'Entités financières et leurs prestataires TIC critiques', 'Un règlement de sécurité identique dans toute l’UE'],
+        ),
+        ul(
+          'Un **cadre** se choisit ; une **directive** s’applique via la loi nationale ; un **règlement** s’applique tel quel, sans transposition.',
+          'DORA est une **lex specialis** : pour les entités financières, ses exigences priment sur celles de NIS 2 pour la gestion du risque TIC et la notification des incidents.',
+          'Le NIST CSF reste utile en France : c’est un excellent outil pour **mesurer la maturité** et présenter une feuille de route, même quand la conformité est jugée au regard de NIS 2 ou de DORA.',
+        ),
+        tip('À retenir', "Avant toute analyse, demandez : l'organisation est-elle **assujettie** (secteur, taille) ? Selon quel **texte** (directive transposée ou règlement) ? Qui est l'**autorité** compétente (ANSSI, ACPR, AMF) ?"),
+      ],
+    },
+    {
       id: 'nist-csf',
       title: 'NIST CSF 2.0 : 6 fonctions, 22 catégories',
       blocks: [
@@ -144,6 +164,33 @@ export const m4: Module = {
         links({ to: '/referentiels', label: 'Voir la correspondance NIS 2 / DORA / ISO dans le Mapper' }),
       ],
     },
+    {
+      id: 'programme',
+      level: 'E',
+      title: 'Expertise : programme multi-réglementaire et responsabilité de la direction',
+      blocks: [
+        h('1. Un référentiel de contrôles unique'),
+        p("Une entité financière cotée peut être soumise à DORA, à NIS 2 pour certaines filiales, au RGPD, à l'AI Act, et viser ISO 27001. Gérer chaque texte en silo multiplie les questionnaires, les audits et les incohérences. Le senior construit un **référentiel de contrôles unifié**, mappé vers chaque exigence, et pilote une seule base de preuves."),
+        h('2. Prioriser ce que le régulateur regardera'),
+        table(
+          ['Priorité', 'Pourquoi'],
+          ['Gouvernance et responsabilité de la direction', 'Premier point contrôlé : approbation formelle, formation, supervision tracée'],
+          ['Notification des incidents', 'Délais courts (24 h / 4 h), sanctions visibles, processus testable par exercice'],
+          ['Gestion des tiers (registre DORA, chaîne d’approvisionnement NIS 2)', 'Exigence documentaire lourde, souvent sous-estimée'],
+          ['Tests (résilience, TLPT pour DORA)', 'Preuve d’efficacité, pas seulement de conception'],
+        ),
+        h('3. Les sanctions et la responsabilité personnelle'),
+        ul(
+          '**NIS 2** : amendes jusqu’à 10 M€ ou 2 % du chiffre d’affaires mondial pour les entités essentielles, 7 M€ ou 1,4 % pour les entités importantes ; possibilité d’interdire temporairement à un dirigeant d’exercer ses fonctions (entités essentielles).',
+          '**DORA** : sanctions définies par les États membres et appliquées par les autorités financières, y compris à l’encontre des membres de l’organe de direction ; supervision directe des prestataires TIC critiques par les autorités européennes.',
+          'La formation obligatoire des dirigeants (NIS 2 Art. 20.2, DORA Art. 5.4) est l’occasion de transformer la contrainte en levier : un exercice de crise sur table avec le COMEX vaut dix présentations.',
+        ),
+        h('4. Conformité ou sécurité réelle ?'),
+        p("Un programme qui optimise la note d'audit sans réduire le risque échoue au premier incident. Le senior mesure les deux : **taux de conformité** aux exigences, et **indicateurs de résultat** (délai de correction des vulnérabilités critiques, couverture MFA et EDR, RTO démontré). Si les deux divergent, ce sont les indicateurs de résultat qui disent la vérité."),
+        warn('Piège classique', "Déclarer l'entité « non concernée » par NIS 2 sans analyse documentée. En cas de contrôle ou d'incident, l'absence de raisonnement écrit (secteur, taille, entreprises liées) sera reprochée. Conservez la note d'assujettissement et révisez-la à chaque acquisition."),
+        info('Restez à jour', "La transposition française de NIS 2 et les textes d'application précisent progressivement les obligations. Vérifiez toujours l'état des textes en vigueur et les publications de l'ANSSI avant de conclure."),
+      ],
+    },
   ],
   templates: [
     doc('Modèle - Qualification NIS 2 d’une entité', `FICHE DE QUALIFICATION NIS 2
@@ -232,6 +279,18 @@ Stratégie de sortie documentée : OUI - réf. EXIT-118 · testée : [date]`),
       ],
       answer: 0,
       explain: "La lettre j) vise l'authentification multifacteur ou continue et les communications sécurisées (vocales, vidéo, texte, urgence).",
+    },
+    {
+      q: 'Une banque soumise à DORA et entrant dans le champ de NIS 2 : quel texte régit sa notification d’incident TIC ?',
+      options: ['NIS 2 uniquement', 'DORA, en tant que lex specialis pour les entités financières', 'Les deux, avec deux notifications identiques', 'Aucun, c’est le RGPD'],
+      answer: 1,
+      explain: 'DORA prime pour la gestion du risque TIC et la notification des incidents des entités financières.',
+    },
+    {
+      q: 'Votre taux de conformité NIS 2 atteint 92 %, mais le délai moyen de correction des vulnérabilités critiques est de 75 jours. Que présentez-vous au COMEX ?',
+      options: ['Les 92 %, c’est excellent', 'Les deux indicateurs, en soulignant que le risque réel reste élevé malgré la conformité documentaire', 'Uniquement le délai', 'Rien avant d’avoir atteint 100 %'],
+      answer: 1,
+      explain: 'Les indicateurs de résultat révèlent l’écart entre conformité de façade et sécurité réelle.',
     },
   ],
 }

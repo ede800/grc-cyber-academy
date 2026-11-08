@@ -1,4 +1,4 @@
-import { Download, Lightbulb, Search, Sparkles } from 'lucide-react'
+import { ChevronRight, Download, FileCheck2, Lightbulb, MessageCircleQuestion, Search, Sparkles, TriangleAlert } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { btnGhost, Card, inputCls, PageHeader, Segmented, Tag } from '../components/ui'
@@ -22,7 +22,7 @@ export function FrameworkMapper() {
   return (
     <>
       <PageHeader eyebrow="Outil 4" title="Cross-Framework Mapper">
-        Un thème, cinq référentiels : retrouvez immédiatement la mesure ISO 27002, la sous-catégorie NIST CSF 2.0 et l’article NIS 2, DORA ou RGPD correspondants. Explorez ensuite les 93 mesures de l’Annexe A et construisez votre Déclaration d’Applicabilité.
+        Un thème, cinq référentiels : retrouvez immédiatement la mesure ISO 27002, la sous-catégorie NIST CSF 2.0 et l’article NIS 2, DORA ou RGPD correspondants. Explorez ensuite les 93 mesures de l’Annexe A avec le guide de terrain de l’auditeur (questions, preuves à échantillonner, faux-semblants) et construisez votre Déclaration d’Applicabilité.
       </PageHeader>
       <div role="tablist" className="mb-5 flex gap-1 border-b border-line">
         {[
@@ -157,7 +157,7 @@ function IsoExplorer() {
   const list = useMemo(() => {
     const q = norm(query.trim())
     return isoControls.filter(
-      (c) => (theme === 'Toutes' || c.theme === theme) && (!onlyNew || c.isNew) && (!q || norm(`${c.id} ${c.title} ${c.purpose} ${c.evidence}`).includes(q)),
+      (c) => (theme === 'Toutes' || c.theme === theme) && (!onlyNew || c.isNew) && (!q || norm([c.id, c.title, c.purpose, c.evidence, ...c.auditQuestions, ...c.expectedEvidence, ...c.commonPitfalls].join(' ')).includes(q)),
     )
   }, [theme, onlyNew, query])
   const filled = Object.keys(progress.soa).length
@@ -229,6 +229,7 @@ function IsoExplorer() {
                   </div>
                   <Tag>{c.theme}</Tag>
                 </div>
+                <FieldGuide c={c} defaultOpen={list.length === 1} />
                 <div className="mt-3 flex flex-col gap-2 border-t border-line pt-3 md:flex-row md:items-center">
                   <select
                     aria-label={`Statut DdA de ${c.id}`}
@@ -263,5 +264,38 @@ function IsoExplorer() {
         })}
       </ul>
     </>
+  )
+}
+
+/** Guide de terrain de l'auditeur : questions, preuves à échantillonner, faux-semblants. */
+function FieldGuide({ c, defaultOpen }: { c: IsoControl; defaultOpen: boolean }) {
+  const [open, setOpen] = useState(defaultOpen)
+  const cols = [
+    { title: 'Questions à poser', icon: MessageCircleQuestion, cls: 'text-accent', items: c.auditQuestions },
+    { title: 'Preuves à échantillonner', icon: FileCheck2, cls: 'text-emerald', items: c.expectedEvidence },
+    { title: 'Faux-semblants classiques', icon: TriangleAlert, cls: 'text-amber', items: c.commonPitfalls },
+  ]
+  return (
+    <div className="mt-3">
+      <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="inline-flex items-center gap-1.5 text-xs font-medium text-accent hover:text-white">
+        <ChevronRight size={13} className={`transition ${open ? 'rotate-90' : ''}`} aria-hidden /> Guide de terrain de l’auditeur
+      </button>
+      {open && (
+        <div className="fade-in mt-2 grid grid-cols-1 gap-3 md:grid-cols-3">
+          {cols.map((col) => (
+            <div key={col.title} className="rounded-md border border-line bg-bg p-3">
+              <p className={`mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold tracking-wide uppercase ${col.cls}`}>
+                <col.icon size={12} aria-hidden /> {col.title}
+              </p>
+              <ul className="list-disc space-y-1 pl-4 text-xs leading-relaxed marker:text-mute">
+                {col.items.map((t) => (
+                  <li key={t}>{t}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   )
 }

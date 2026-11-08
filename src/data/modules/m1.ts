@@ -1,5 +1,5 @@
 import type { Module } from '../../types'
-import { danger, doc, h, info, ol, p, table, tip, ul, warn } from '../blocks'
+import { danger, doc, h, info, links, ol, p, table, tip, ul, warn } from '../blocks'
 
 export const m1: Module = {
   id: 'gouvernance',
@@ -15,6 +15,24 @@ export const m1: Module = {
     'Concevoir des KPI opérationnels et des KRI COMEX mesurables, avec seuils et propriétaires',
   ],
   sections: [
+    {
+      id: 'bases',
+      level: 'F',
+      title: 'L’essentiel : gouvernance, management et contrôle en 5 minutes',
+      blocks: [
+        p("Imaginez une ville. Le **conseil municipal** fixe les règles, vote le budget et décide des priorités : c'est la **gouvernance**. Les **services techniques** entretiennent les routes et l'éclairage : c'est le **management** opérationnel. La **chambre régionale des comptes** vérifie que l'argent est bien utilisé : c'est le **contrôle**. La gouvernance cyber transpose ce modèle à la sécurité de l'information."),
+        table(
+          ['Terme', 'En une phrase', 'Exemple'],
+          ['PSSI', 'Le document qui fixe les règles et l’organisation de la sécurité, signé par la direction', '« Tout accès distant exige une authentification multifacteur »'],
+          ['RSSI', 'La personne qui pilote la sécurité, conseille la direction et contrôle l’application des règles', 'Présente chaque trimestre les risques au COMEX'],
+          ['DPO', 'Le délégué à la protection des données, obligatoire dans certains cas (RGPD Art. 37)', 'Tient le registre des traitements, conseille sur les AIPD'],
+          ['Propriétaire du risque', 'Le responsable métier qui décide du traitement d’un risque et l’accepte', 'Le DAF pour la fraude au virement'],
+          ['Appétence au risque', 'Le niveau de risque que la direction accepte de prendre', '« Aucun risque critique résiduel sur les fonctions vitales »'],
+          ['KPI / KRI', 'Indicateur de performance d’une activité / indicateur qui signale une hausse du risque', 'KPI : 95 % des postes à jour · KRI : 3 vulnérabilités critiques exposées'],
+        ),
+        tip('À retenir', "La sécurité n'est pas qu'un sujet informatique : la direction **décide**, les métiers **possèdent** leurs risques, l'IT et le RSSI **mettent en œuvre et conseillent**, l'audit **vérifie**. Tout le reste du module découle de cette répartition."),
+      ],
+    },
     {
       id: 'piliers',
       title: 'Les 4 piliers de la gouvernance cyber',
@@ -129,6 +147,32 @@ export const m1: Module = {
           '**Seuils** : vert / ambre / rouge alignés sur l’appétence au risque.',
         ),
         danger('Le piège du dénominateur', "« 99 % des postes ont l'EDR » ne vaut rien si le dénominateur vient de la console EDR elle-même : les postes non enrôlés n'y existent pas. Le dénominateur doit venir d'une source **indépendante** (CMDB, Active Directory, scans réseau)."),
+      ],
+    },
+    {
+      id: 'strategie',
+      level: 'E',
+      title: 'Expertise : arbitrages COMEX, mandat du RSSI et gouvernance des exceptions',
+      blocks: [
+        h('1. Arbitrer un budget contraint'),
+        p("Le COMEX accorde rarement tout ce qui est demandé. Le RSSI senior ne répartit pas la pénurie en silence : il classe les projets par **réduction de risque par euro** (ALE évitée / coût annuel, méthode FAIR), finance d'abord les mesures à fort levier (MFA résistante au phishing, sauvegardes immuables, EDR), puis présente explicitement les **risques résiduels non financés**, chiffrés, avec un propriétaire métier qui les accepte par écrit."),
+        table(
+          ['Mesure', 'Coût annuel', 'ALE évitée', 'Ratio'],
+          ['MFA résistante au phishing pour admins et dirigeants', '60 k€', '900 k€', '15'],
+          ['Sauvegardes immuables + test de restauration', '120 k€', '1,4 M€', '11,7'],
+          ['SIEM nouvelle génération', '450 k€', '600 k€', '1,3'],
+        ),
+        h('2. Négocier son mandat'),
+        ul(
+          '**Lettre de mission** signée par la direction générale : périmètre, pouvoirs (avis bloquant sur les mises en production critiques), droit d’escalade direct au COMEX ou au comité d’audit.',
+          '**Indépendance** : si le RSSI est rattaché au DSI, prévoir un lien fonctionnel avec la direction des risques ou le comité d’audit (DORA Art. 6.4 l’exige pour la fonction de contrôle dans le secteur financier).',
+          '**Budget propre** pour les activités de 2e ligne (audits, tests, outils de pilotage), distinct du budget d’exploitation de la DSI.',
+        ),
+        h('3. Gouverner les exceptions'),
+        p("Les dérogations sont le thermomètre de la gouvernance : trop nombreuses, elles signalent des règles inadaptées ; invisibles, elles masquent des risques non acceptés. Exigez un registre unique, une durée limitée, des mesures compensatoires et la signature du **propriétaire du risque**. Le module 10 détaille le processus."),
+        warn('Pièges d’audit en gouvernance', "Comités sécurité sans décision tracée au PV, PSSI signée par un directeur parti depuis deux ans, RACI parfait mais inconnu des personnes interrogées, KRI présentés sans seuil ni propriétaire, risques acceptés par le RSSI au lieu du métier. L'auditeur ne lit pas l'organigramme : il interroge trois personnes et compare."),
+        danger('Responsabilité personnelle des dirigeants', "NIS 2 (Art. 20) prévoit que les membres de l'organe de direction approuvent les mesures, supervisent leur mise en œuvre, suivent une formation et peuvent être tenus **responsables** des manquements. Un COMEX qui « délègue la cyber au RSSI » sans décision tracée s'expose personnellement."),
+        links({ to: '/risques?tab=fair', label: 'Chiffrer un arbitrage avec le calculateur FAIR / ROSI' }, { to: '/modules/projets-derogations', label: 'Module 10 : gérer les dérogations' }),
       ],
     },
   ],
@@ -277,6 +321,19 @@ Action si ROUGE : escalade DSI + RSSI sous 24 h, plan de remédiation ou accepta
       ],
       answer: 0,
       explain: 'Une exigence auditable est précise, mesurable et rattachée à un standard qui produit une preuve. Les trois autres sont des intentions invérifiables.',
+    },
+    {
+      q: 'Le COMEX accorde 40 % du budget sécurité demandé. Quelle est l’attitude attendue d’un RSSI senior ?',
+      case: 'Le plan demandait 5 M€ ; 2 M€ sont accordés.',
+      options: ['Réduire tous les projets de 60 %', 'Prioriser par réduction de risque par euro et faire accepter formellement les risques résiduels non financés par leurs propriétaires', 'Démissionner', 'Financer d’abord le projet le plus visible'],
+      answer: 1,
+      explain: 'La décision de ne pas financer devient un choix éclairé et tracé de la direction, pas un risque caché.',
+    },
+    {
+      q: 'Quel élément du mandat du RSSI protège le mieux son indépendance ?',
+      options: ['Un bureau proche de la DSI', 'Un droit d’escalade direct au COMEX ou au comité d’audit, inscrit dans une lettre de mission', 'Un titre de directeur', 'Un budget fusionné avec celui de la DSI'],
+      answer: 1,
+      explain: 'Sans voie d’escalade indépendante, le RSSI contrôle celui qui arbitre ses moyens.',
     },
   ],
 }

@@ -1,7 +1,9 @@
-import { ArrowRight, BookOpen, Building2, ClipboardCheck, Clock, GitCompareArrows, Grid3x3, RotateCcw, Scale, Trophy } from 'lucide-react'
+import { ArrowRight, BookOpen, BriefcaseBusiness, Building2, ClipboardCheck, Clock, GitCompareArrows, Grid3x3, RotateCcw, Scale, SearchCheck, Trophy } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Card, PageHeader, ProgressBar, ScoreBadge } from '../components/ui'
+import { auditCases } from '../data/auditCases'
 import { contractCases } from '../data/contractsRedline'
+import { interviewQuestions } from '../data/interviewPrep'
 import { modules } from '../data/modules'
 import { riskScenarios } from '../data/riskScenarios'
 import { tprmCases } from '../data/tprmCases'
@@ -29,13 +31,15 @@ export function Dashboard() {
     { to: '/contrats', icon: Scale, title: 'Contract & PAS Redliner', desc: 'Repérer les pièges et rédiger la contre-clause', done: Object.keys(progress.contracts).length, total: contractCases.length, score: avg(Object.values(progress.contracts)) },
     { to: '/tprm', icon: Building2, title: 'Vendor Risk Assessor', desc: 'Due diligence et verdict Go / No-Go', done: Object.keys(progress.tprm).length, total: tprmCases.length, score: avg(Object.values(progress.tprm)) },
     { to: '/risques', icon: Grid3x3, title: 'Risk Register & EBIOS Studio', desc: 'Matrice 5x5, résiduel et mémo COMEX', done: risksScored.length, total: riskScenarios.length, score: avg(risksScored.map((s) => progress.risks[s.id].score as number)) },
-    { to: '/referentiels', icon: GitCompareArrows, title: 'Cross-Framework Mapper', desc: 'ISO ↔ NIST ↔ NIS 2 ↔ DORA ↔ RGPD et DdA', done: Object.keys(progress.soa).length, total: 93, score: undefined },
+    { to: '/referentiels', icon: GitCompareArrows, title: 'Cross-Framework Mapper', desc: 'ISO ↔ NIST ↔ NIS 2 ↔ DORA ↔ RGPD, guide d’audit et DdA', done: Object.keys(progress.soa).length, total: 93, score: undefined },
+    { to: '/audit', icon: SearchCheck, title: 'Simulateur d’audit ISO 19011', desc: 'Qualifier un constat, cause racine et CAPA', done: Object.keys(progress.audits).length, total: auditCases.length, score: avg(Object.values(progress.audits)) },
+    { to: '/livrables?tab=entretiens', icon: BriefcaseBusiness, title: 'Livrables & entretiens senior', desc: '5 livrables exportables, 25 questions d’entretien', done: Object.values(progress.interviews).filter((m) => m === 'maitrise').length, total: interviewQuestions.length, score: undefined },
   ]
 
   return (
     <>
       <PageHeader eyebrow="Executive Dashboard" title="GRC & Cyber Compliance Academy">
-        De l’analyste GRC junior au RSSI : gouvernance, ISO 27001, risques, NIS 2, DORA, RGPD, AI Act, gestion des tiers, continuité, audit et contrats IT, avec quatre simulateurs opérationnels.
+        De l’analyste GRC junior au RSSI : gouvernance, ISO 27001, risques et quantification FAIR, NIS 2, DORA, RGPD, AI Act, gestion des tiers, SOC 2, SecNumCloud, PCI DSS, continuité, audit, contrats IT et sécurité des projets. Dix modules en trois paliers, cinq simulateurs et un hub carrière.
       </PageHeader>
 
       <Card className="mb-6 p-5">
@@ -66,12 +70,13 @@ export function Dashboard() {
         </ol>
       </Card>
 
-      <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
         {[
           { label: 'Modules lus', icon: BookOpen, value: `${modulesDone}/${modules.length}` },
-          { label: 'Moyenne des quiz', icon: ClipboardCheck, value: quizAvg !== undefined ? `${quizAvg} %` : '-' },
+          { label: 'Moyenne des quiz', icon: SearchCheck, value: quizAvg !== undefined ? `${quizAvg} %` : '-' },
           { label: 'Contrats revus', icon: Scale, value: `${Object.keys(progress.contracts).length}/${contractCases.length}` },
           { label: 'Tiers évalués', icon: Building2, value: `${Object.keys(progress.tprm).length}/${tprmCases.length}` },
+          { label: 'Audits réalisés', icon: ClipboardCheck, value: `${Object.keys(progress.audits).length}/${auditCases.length}` },
         ].map((s) => (
           <Card key={s.label} className="p-4">
             <p className="flex items-center gap-1.5 text-xs text-mute">

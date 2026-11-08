@@ -1,4 +1,5 @@
 import type { ContractCase } from '../types'
+import { advancedContracts } from './contractsAdvanced'
 
 export const contractCases: ContractCase[] = [
   {
@@ -240,4 +241,5 @@ export const contractCases: ContractCase[] = [
     legalBasis: ['DORA Art. 28.7 et 28.8 : résiliation et stratégies de sortie', 'DORA Art. 30.2 b), g), h) : localisation, coopération avec les autorités, préavis', 'DORA Art. 30.3 d), e), f) : TLPT, audit illimité, sortie (fonctions critiques)', 'Orientations EBA sur l’externalisation (EBA/GL/2019/02)'],
     negotiationTip: "Les grands hyperscalers publient désormais des « addenda DORA » standard : demandez-les en premier, puis comparez-les ligne à ligne avec l'Art. 30.",
   },
+  ...advancedContracts,
 ]

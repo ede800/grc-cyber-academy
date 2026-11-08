@@ -1,6 +1,7 @@
-import { ArrowLeft, ArrowRight, FilePlus2, Grid3x3, Trash2 } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Calculator, FilePlus2, Grid3x3, Trash2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
+import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { FairCalculator } from '../components/FairCalculator'
 import { RiskMatrix, type MatrixMarker } from '../components/RiskMatrix'
 import { btnGhost, btnPrimary, Card, CopyButton, DocBlock, inputCls, LevelBadge, ListSummary, PageHeader, ScoreBadge, Segmented, StatusBadge, Tag } from '../components/ui'
 import { riskControls, riskScenarios } from '../data/riskScenarios'
@@ -37,7 +38,39 @@ function useRegister(): RowItem[] {
   ]
 }
 
+const STUDIO_TABS = [
+  { id: 'registre', label: 'Registre & matrice 5x5', icon: Grid3x3 },
+  { id: 'fair', label: 'Quantification FAIR / ROSI', icon: Calculator },
+] as const
+
 export function RiskList() {
+  const [params, setParams] = useSearchParams()
+  const tab = params.get('tab') === 'fair' ? 'fair' : 'registre'
+  return (
+    <>
+      <PageHeader eyebrow="Simulateur 3" title="Risk Register & EBIOS Studio">
+        Cotez des scénarios de risque réels (gravité × vraisemblance), sélectionnez les mesures ISO 27002 / NIST, calculez le risque résiduel, choisissez l’option de traitement et générez le mémo d’acceptation pour le COMEX. Puis chiffrez le risque en euros avec la méthode FAIR. Appétence au risque retenue : résiduel ≤ {APPETITE}.
+      </PageHeader>
+      <div role="tablist" className="mb-5 flex gap-1 overflow-x-auto border-b border-line">
+        {STUDIO_TABS.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            role="tab"
+            aria-selected={tab === t.id}
+            onClick={() => setParams(t.id === 'fair' ? { tab: 'fair' } : {})}
+            className={`-mb-px flex shrink-0 items-center gap-2 border-b-2 px-3 py-2.5 text-sm transition ${tab === t.id ? 'border-accent font-medium text-white' : 'border-transparent text-mute hover:text-white'}`}
+          >
+            <t.icon size={15} aria-hidden /> {t.label}
+          </button>
+        ))}
+      </div>
+      {tab === 'fair' ? <FairCalculator /> : <Register />}
+    </>
+  )
+}
+
+function Register() {
   const { progress, saveCustomRisks } = useProgress()
   const rows = useRegister()
   const navigate = useNavigate()
@@ -61,9 +94,6 @@ export function RiskList() {
 
   return (
     <>
-      <PageHeader eyebrow="Simulateur 3" title="Risk Register & EBIOS Studio">
-        Cotez des scénarios de risque réels (gravité × vraisemblance), sélectionnez les mesures ISO 27002 / NIST, calculez le risque résiduel, choisissez l’option de traitement et générez le mémo d’acceptation pour le COMEX. Appétence au risque retenue : résiduel ≤ {APPETITE}.
-      </PageHeader>
       <ListSummary
         unit="scénarios cotés et validés"
         done={riskScenarios.filter((s) => progress.risks[s.id]?.score !== undefined).length}

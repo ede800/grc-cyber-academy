@@ -16,6 +16,24 @@ export const m6: Module = {
   ],
   sections: [
     {
+      id: 'bases',
+      level: 'F',
+      title: 'L’essentiel : pourquoi vos fournisseurs sont votre surface d’attaque',
+      blocks: [
+        p("Confier les clés de sa maison à une entreprise de ménage, c'est accepter que la sécurité de la maison dépende aussi de la sienne : qui a les clés, comment elle recrute, où elle range les doubles. En entreprise, chaque SaaS, infogéreur ou prestataire qui accède à vos données ou à votre réseau est un **tiers** dont les faiblesses deviennent les vôtres."),
+        table(
+          ['Terme', 'Signification'],
+          ['Tiers / fournisseur', 'Toute organisation externe qui fournit un service, accède à vos données ou à votre SI'],
+          ['TPRM', 'Third-Party Risk Management : le processus qui identifie, évalue, contractualise et surveille ces tiers'],
+          ['Criticité (tiering)', 'Le classement des tiers selon leur accès, les données traitées et l’impact métier d’une défaillance'],
+          ['Due diligence', 'L’évaluation avant signature : questionnaire, preuves, entretien'],
+          ['Quatrième partie', 'Le sous-traitant de votre fournisseur (son hébergeur, son support offshore)'],
+        ),
+        info('Ordres de grandeur', "Les attaques par la chaîne d'approvisionnement (prestataire compromis, mise à jour logicielle piégée) figurent parmi les scénarios les plus redoutés par l'ANSSI et l'ENISA. NIS 2 (Art. 21.2 d) et DORA (Art. 28 à 30) en font des obligations explicites."),
+        tip('À retenir', "On n'évalue pas tous les fournisseurs avec la même intensité : un fournisseur de fournitures de bureau et l'infogéreur qui administre votre Active Directory ne méritent pas le même questionnaire."),
+      ],
+    },
+    {
       id: 'cycle',
       title: 'Le cycle de vie d’un tiers',
       blocks: [
@@ -120,6 +138,34 @@ export const m6: Module = {
           'Revue annuelle des preuves (nouveau SOC 2, renouvellement de certificat).',
           'Événements déclencheurs : rachat du fournisseur, changement d’hébergeur, incident majeur, élargissement du périmètre de données.',
         ),
+      ],
+    },
+    {
+      id: 'expert-tprm',
+      level: 'E',
+      title: 'Expertise : TPRM à l’échelle, concentration et fournisseurs dominants',
+      blocks: [
+        h('1. Passer à l’échelle sans noyer l’équipe'),
+        p("Un grand groupe compte des milliers de fournisseurs. Le senior industrialise : **pré-qualification automatique** de la criticité à l'entrée (formulaire achats), questionnaires proportionnés, réutilisation des preuves standard (SOC 2, ISO 27001), et réévaluation continue concentrée sur les Tier 1."),
+        table(
+          ['Tier', 'Part du portefeuille', 'Évaluation', 'Fréquence'],
+          ['Tier 1 - Critique', '≈ 5 %', 'Questionnaire complet, preuves, entretien, éventuellement audit', 'Annuelle + surveillance continue'],
+          ['Tier 2 - Élevé', '≈ 15 %', 'Questionnaire ciblé et preuves standard', 'Tous les 2 ans'],
+          ['Tier 3 - Standard', '≈ 80 %', 'Clauses contractuelles types et auto-déclaration', 'À l’entrée et au renouvellement'],
+        ),
+        h('2. Les notations de sécurité externes : utiles mais partielles'),
+        p("Les plateformes de notation (security ratings) analysent la surface exposée sur Internet d'un fournisseur. Elles détectent des signaux (certificat expiré, service exposé, fuite d'identifiants) mais ne voient ni la gouvernance, ni les sauvegardes, ni les accès internes. Utilisez-les comme **déclencheur** de questions, jamais comme verdict."),
+        h('3. Risque de concentration'),
+        p("Quand dix applications critiques dépendent du même hyperscaler, la défaillance d'un seul fournisseur arrête toute l'entreprise. DORA impose d'évaluer ce **risque de concentration** et de le documenter. La réponse n'est pas forcément le multi-cloud (coûteux et complexe), mais une analyse des dépendances, des architectures multi-régions et des stratégies de sortie testées pour les fonctions critiques."),
+        h('4. Le fournisseur dominant qui refuse vos exigences'),
+        ul(
+          'Remplacer le questionnaire par l’**analyse de ses rapports** (SOC 2 Type II, ISO 27001/27017/27018) et de sa documentation publique.',
+          'Utiliser ses **programmes standard** : addenda contractuels réglementaires, programme d’audit pour clients régulés, audits mutualisés.',
+          'Compenser techniquement : chiffrement avec clés client, journalisation de votre côté, sauvegardes hors du fournisseur.',
+          'Formaliser le **risque résiduel** et le faire accepter par le propriétaire métier ; le présenter au COMEX s’il dépasse l’appétence.',
+        ),
+        warn('Pièges d’audit en TPRM', "Registre limité aux fournisseurs référencés par les achats (les SaaS payés par carte bancaire y échappent), questionnaires 100 % « Oui » jamais confrontés aux preuves, évaluation unique à l'entrée en relation, certificat ISO dont le périmètre ne couvre pas le service acheté."),
+        info('KRI TPRM pour le COMEX', "Part des Tier 1 évalués depuis moins de 12 mois ; nombre de Tier 1 avec plan de remédiation en retard ; incidents de sécurité chez des tiers ; dépendances critiques sans stratégie de sortie."),
       ],
     },
   ],
@@ -230,6 +276,18 @@ CONTRAT
       options: ['L’offboarding : révocation des accès, restitution et destruction certifiée des données', 'L’onboarding', 'La signature du contrat', 'Le choix du fournisseur'],
       answer: 0,
       explain: "Comptes de prestataires actifs des années après la fin du contrat, données jamais restituées : l'offboarding doit être une étape contrôlée avec preuves.",
+    },
+    {
+      q: 'Une plateforme de notation externe attribue la note A à un fournisseur critique. Que concluez-vous ?',
+      options: ['Il est sûr, l’évaluation est terminée', 'C’est un signal utile sur sa surface exposée, mais il faut encore évaluer sa gouvernance, ses accès et sa résilience', 'La note remplace le contrat', 'Il faut exiger la note A+'],
+      answer: 1,
+      explain: 'Les notations externes ne voient que l’extérieur : elles déclenchent des questions, elles ne rendent pas de verdict.',
+    },
+    {
+      q: 'Dix applications critiques dépendent du même fournisseur cloud. Quelle exigence DORA cela soulève-t-il ?',
+      options: ['Aucune', 'L’évaluation et la documentation du risque de concentration, avec des stratégies de sortie pour les fonctions critiques', 'L’obligation immédiate de passer au multi-cloud', 'Une notification à la CNIL'],
+      answer: 1,
+      explain: 'DORA impose d’identifier et de gérer le risque de concentration, sans imposer une architecture particulière.',
     },
   ],
 }

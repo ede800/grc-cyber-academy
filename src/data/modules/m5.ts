@@ -1,5 +1,5 @@
 import type { Module } from '../../types'
-import { danger, doc, h, info, ol, p, table, tip, ul, warn } from '../blocks'
+import { danger, doc, h, info, links, ol, p, table, tip, ul, warn } from '../blocks'
 
 export const m5: Module = {
   id: 'rgpd-ia',
@@ -16,6 +16,23 @@ export const m5: Module = {
     'Classer un système d’IA selon l’AI Act et déployer une gouvernance GenAI',
   ],
   sections: [
+    {
+      id: 'bases',
+      level: 'F',
+      title: 'L’essentiel : données personnelles et IA en mots simples',
+      blocks: [
+        p("Une **donnée personnelle** est toute information qui permet d'identifier une personne, directement (nom, photo) ou indirectement (adresse IP, numéro de client, plaque d'immatriculation, combinaison âge + commune + profession). Un **traitement** est toute opération sur ces données : collecte, stockage, consultation, envoi, suppression."),
+        table(
+          ['Rôle', 'Qui', 'Exemple'],
+          ['Responsable de traitement', 'Décide pourquoi et comment les données sont traitées', 'L’entreprise qui gère la paie de ses salariés'],
+          ['Sous-traitant', 'Traite les données pour le compte du responsable, sur ses instructions', 'L’éditeur du logiciel de paie en SaaS'],
+          ['Personne concernée', 'La personne dont on traite les données', 'Le salarié'],
+          ['DPO', 'Conseille et contrôle la conformité', 'Le délégué à la protection des données'],
+        ),
+        info('Et l’IA ?', "L'**AI Act** classe les systèmes d'IA selon leur risque : **interdits** (notation sociale, manipulation), **à haut risque** (recrutement, crédit, éducation : obligations lourdes), **risque limité** (chatbots : obligation de transparence) et **risque minimal**. Il s'ajoute au RGPD, il ne le remplace pas."),
+        tip('Analogie', "Le responsable de traitement est le propriétaire d'un appartement ; le sous-traitant est l'agence qui le gère selon ses consignes. Si l'agence commence à louer l'appartement pour son propre compte, elle n'est plus un simple mandataire : c'est exactement ce qui se passe quand un fournisseur d'IA réutilise vos données pour entraîner ses modèles."),
+      ],
+    },
     {
       id: 'principes',
       title: 'Principes du RGPD et registre des traitements (Art. 5 et 30)',
@@ -177,6 +194,34 @@ export const m5: Module = {
    au principe du moindre privilège et à une revue sécurité avant déploiement.`),
       ],
     },
+    {
+      id: 'expert-direction',
+      level: 'E',
+      title: 'Expertise : gouvernance des données et de l’IA au niveau direction',
+      blocks: [
+        h('1. Le « shadow AI », premier risque réel'),
+        p("Avant même les systèmes à haut risque, le premier risque de l'IA en entreprise est l'usage non encadré d'outils grand public : contrats, code source ou données clients copiés dans un assistant dont les conditions autorisent l'entraînement. Interdire ne fonctionne pas ; le senior propose une **offre interne encadrée**, une règle d'usage claire et un circuit rapide d'approbation des nouveaux outils."),
+        h('2. Un comité IA, pas un comité de plus'),
+        ul(
+          'Composition : métier, DPO, RSSI, juridique, data, éventuellement RH et éthique.',
+          'Livrables : **inventaire des systèmes d’IA** avec leur classification AI Act, règles d’usage, validation des cas d’usage sensibles.',
+          'Articulation des analyses : **AIPD** (RGPD Art. 35) et, pour certains déployeurs de systèmes à haut risque, **analyse d’impact sur les droits fondamentaux** (AI Act Art. 27).',
+          'Pour aller plus loin : un système de management de l’IA certifiable **ISO/IEC 42001**, intégré au SMSI.',
+        ),
+        h('3. Négocier avec les fournisseurs d’IA'),
+        p("Les clauses clés : **interdiction d'entraînement** sur vos données (y compris embeddings et fine-tuning), conservation bornée, absence de revue humaine par défaut, sous-traitants (fournisseurs de modèles) nommés et soumis à autorisation, localisation, et documentation fournie au titre de l'AI Act. Un réglage de console ne remplace pas un engagement contractuel."),
+        h('4. Arbitrer le risque de sanction'),
+        table(
+          ['Texte', 'Plafond de sanction'],
+          ['RGPD', 'Jusqu’à 20 M€ ou 4 % du chiffre d’affaires annuel mondial'],
+          ['AI Act - pratiques interdites', 'Jusqu’à 35 M€ ou 7 % du chiffre d’affaires annuel mondial'],
+          ['AI Act - autres obligations', 'Jusqu’à 15 M€ ou 3 % du chiffre d’affaires annuel mondial'],
+        ),
+        warn('Pièges d’audit', "Registre des traitements figé depuis 2018 ; AIPD « cochées » sans analyse réelle des risques pour les personnes ; violations non inscrites au registre car jugées sans risque ; outils d'IA utilisés par les métiers absents de tout inventaire."),
+        info('Calendrier', "Les obligations de l'AI Act entrent en application par étapes (pratiques interdites et littératie en IA depuis février 2025, modèles à usage général depuis août 2025, systèmes à haut risque ensuite). Des ajustements de calendrier ont été proposés par la Commission : vérifiez les textes en vigueur."),
+        links({ to: '/contrats/ia-entrainement', label: 'Négocier une clause d’interdiction d’entraînement dans le Redliner' }),
+      ],
+    },
   ],
   templates: [
     doc('Modèle - Matrice de notification multi-régime', `MATRICE DE NOTIFICATION D'INCIDENT
@@ -266,6 +311,18 @@ Critères CEPD remplis :
       options: ['ISO/IEC 42001', 'ISO/IEC 27701', 'ISO/IEC 22301', 'ISO/IEC 27005'],
       answer: 0,
       explain: "ISO/IEC 42001:2023 (SMIA). ISO 27701 étend le SMSI à la vie privée, ISO 22301 couvre la continuité, ISO 27005 la gestion des risques.",
+    },
+    {
+      q: 'Des juristes collent des contrats clients dans un assistant d’IA grand public. Quelle réponse est la plus efficace ?',
+      options: ['Bloquer tous les sites d’IA sans alternative', 'Proposer un outil interne encadré par contrat (pas d’entraînement, conservation bornée), avec une règle d’usage et un circuit d’approbation', 'Ne rien faire, l’outil est fiable', 'Demander aux juristes d’anonymiser'],
+      answer: 1,
+      explain: 'Interdire sans alternative déplace l’usage ; une offre encadrée le rend maîtrisable.',
+    },
+    {
+      q: 'Un fournisseur d’IA traite vos données clients et les réutilise pour entraîner ses modèles. Quelle est sa qualification RGPD pour cette réutilisation ?',
+      options: ['Sous-traitant', 'Responsable de traitement pour cette finalité propre (Art. 28.10)', 'Personne concernée', 'Aucune, ce n’est pas un traitement'],
+      answer: 1,
+      explain: 'Le sous-traitant qui détermine ses propres finalités devient responsable de traitement pour celles-ci.',
     },
   ],
 }

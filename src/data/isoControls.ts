@@ -1,4 +1,5 @@
 import type { IsoControl } from '../types'
+import { isoAudit } from './isoAudit/index'
 
 type Row = [id: string, title: string, purpose: string, evidence: string, isNew?: true]
 
@@ -8,7 +9,10 @@ const PH = 'Physiques' as const
 const T = 'Technologiques' as const
 
 function build(theme: IsoControl['theme'], rows: Row[]): IsoControl[] {
-  return rows.map(([id, title, purpose, evidence, isNew]) => ({ id, title, theme, purpose, evidence, ...(isNew ? { isNew } : {}) }))
+  return rows.map(([id, title, purpose, evidence, isNew]) => {
+    const [auditQuestions, expectedEvidence, commonPitfalls] = isoAudit[id] ?? [[], [], []]
+    return { id, title, theme, purpose, evidence, auditQuestions, expectedEvidence, commonPitfalls, ...(isNew ? { isNew } : {}) }
+  })
 }
 
 /** Les 93 mesures de l'Annexe A ISO/IEC 27001:2022 (intitulés en français, objectif et preuves d'audit types). */

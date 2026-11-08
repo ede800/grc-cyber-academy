@@ -1,7 +1,9 @@
-import { BookOpen, Building2, CheckCircle2, Gauge, GitCompareArrows, Grid3x3, Menu, Scale, Search, Trophy, X } from 'lucide-react'
+import { BookOpen, BriefcaseBusiness, Building2, CheckCircle2, ClipboardCheck, Gauge, GitCompareArrows, Grid3x3, Menu, Scale, Search, Trophy, X } from 'lucide-react'
 import { useEffect, useState, type ReactNode } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
+import { auditCases } from '../data/auditCases'
 import { contractCases } from '../data/contractsRedline'
+import { interviewQuestions } from '../data/interviewPrep'
 import { modules } from '../data/modules'
 import { riskScenarios } from '../data/riskScenarios'
 import { tprmCases } from '../data/tprmCases'
@@ -21,6 +23,10 @@ function navCount(to: string, p: Progress): [number, number] | null {
       return [Object.keys(p.tprm).length, tprmCases.length]
     case '/risques':
       return [riskScenarios.filter((s) => p.risks[s.id]?.score !== undefined).length, riskScenarios.length]
+    case '/audit':
+      return [auditCases.filter((c) => p.audits[c.id] !== undefined).length, auditCases.length]
+    case '/livrables':
+      return [interviewQuestions.filter((q) => p.interviews[q.id] === 'maitrise').length, interviewQuestions.length]
     default:
       return null
   }
@@ -34,6 +40,9 @@ const NAV = [
   { to: '/tprm', label: 'Vendor Assessor', icon: Building2 },
   { to: '/risques', label: 'Risk Register EBIOS', icon: Grid3x3 },
   { to: '/referentiels', label: 'Framework Mapper', icon: GitCompareArrows },
+  { to: '/audit', label: 'Simulateur d’audit', icon: ClipboardCheck },
+  { section: 'Carrière' },
+  { to: '/livrables', label: 'Hub carrière', icon: BriefcaseBusiness },
 ] as const
 
 function SidebarContent({ onSearch }: { onSearch: () => void }) {
